@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso Distribuidores — GB FORCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .login-page {
+    min-height: 100vh;
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+
+  /* Left — brand panel */
+  .login-brand-panel {
+    background: linear-gradient(160deg, #0a0a0a 0%, #1a1200 60%, #0f0800 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-brand-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 40% 50%, rgba(201,168,76,0.12) 0%, transparent 65%),
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(201,168,76,0.03) 40px, rgba(201,168,76,0.03) 41px);
+  }
+  .login-brand-inner { position: relative; z-index: 1; text-align: center; max-width: 380px; }
+  .login-brand-logo { margin-bottom: 1.5rem; }
+  .login-brand-logo .logo-gb  { font-family: var(--font-display); font-size: 3.5rem; color: var(--gold); letter-spacing: 0.05em; }
+  .login-brand-logo .logo-force { font-family: var(--font-display); font-size: 3.5rem; color: var(--white); letter-spacing: 0.05em; }
+  .login-brand-logo .logo-sub { display: block; font-family: var(--font-body); font-size: 0.75rem; color: rgba(201,168,76,0.6); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.25rem; }
+  .login-brand-tagline { font-family: var(--font-serif); font-size: 1.4rem; color: var(--white); font-style: italic; margin: 1.5rem 0; line-height: 1.5; }
+  .login-brand-divider { width: 60px; height: 1px; background: var(--gold); margin: 1.5rem auto; opacity: 0.5; }
+  .login-brand-features { list-style: none; padding: 0; text-align: left; }
+  .login-brand-features li { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; color: rgba(245,242,236,0.75); font-size: 0.9rem; border-bottom: 1px solid rgba(201,168,76,0.08); }
+  .login-brand-features li:last-child { border-bottom: none; }
+  .login-brand-features li span { font-size: 1.1rem; }
+  .login-back { position: absolute; top: 2rem; left: 2rem; z-index: 2; font-family: var(--font-body); font-size: 0.85rem; color: rgba(201,168,76,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+  .login-back:hover { color: var(--gold); }
+
+  /* Right — form panel */
+  .login-form-panel {
+    background: var(--black-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    border-left: 1px solid var(--black-border);
+  }
+  .login-form-wrap { width: 100%; max-width: 400px; }
+  .login-form-title { font-family: var(--font-display); font-size: 2.2rem; color: var(--white); margin-bottom: 0.4rem; line-height: 1.1; }
+  .login-form-sub { font-size: 0.9rem; color: rgba(245,242,236,0.55); margin-bottom: 2.5rem; }
+  .login-error { background: rgba(139,26,26,0.25); border: 1px solid rgba(139,26,26,0.5); color: #e87a7a; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.875rem; margin-bottom: 1rem; display: none; }
+  .login-error.visible { display: block; }
+  .login-demo { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 2rem; font-size: 0.8rem; color: rgba(245,242,236,0.6); }
+  .login-demo strong { color: var(--gold); }
+  .login-separator { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--black-border); }
+  .login-separator p { font-size: 0.85rem; color: rgba(245,242,236,0.45); }
+  .login-separator a { color: var(--gold); text-decoration: none; }
+  .login-separator a:hover { text-decoration: underline; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* Loading state */
+  .login-btn-loading { pointer-events: none; opacity: 0.7; }
+  .login-btn-loading::after { content: ''; display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(9,9,9,0.4); border-top-color: var(--black); border-radius: 50%; animation: spin 0.6s linear infinite; margin-left: 0.5rem; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    .login-page { grid-template-columns: 1fr; }
+    .login-brand-panel { display: none; }
+    .login-form-panel { border-left: none; padding: 2rem 1.5rem; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- Brand panel -->
+  <div class="login-brand-panel">
+    <a href="index.html" class="login-back">← Volver al sitio</a>
+    <div class="login-brand-inner">
+      <div class="login-brand-logo">
+        <span class="logo-gb">GB</span><span class="logo-force"> FORCE</span>
+        <span class="logo-sub">by Grupo Bidao</span>
+      </div>
+      <div class="login-brand-divider"></div>
+      <p class="login-brand-tagline">"Portal exclusivo para distribuidores autorizados"</p>
+      <ul class="login-brand-features">
+        <li><span>📋</span> Fichas técnicas y materiales del producto</li>
+        <li><span>📱</span> Contenido listo para redes sociales</li>
+        <li><span>🎓</span> Capacitación y actualizaciones continuas</li>
+        <li><span>💬</span> Scripts de venta y manejo de objeciones</li>
+        <li><span>📦</span> Gestión de pedidos e inventario</li>
+        <li><span>📊</span> Precios, márgenes y historial</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="login-form-panel">
+    <div class="login-form-wrap">
+      <p class="section-label" style="margin-bottom:0.5rem;">Área exclusiva</p>
+      <h1 class="login-form-title">Acceso distribuidores</h1>
+      <p class="login-form-sub">Ingresa con tus credenciales para acceder al portal.</p>
+
+      <div class="login-demo">
+        Demo: usuario <strong>demo</strong> · contraseña <strong>gbforce2024</strong>
+      </div>
+
+      <div class="login-error" id="loginError">Usuario o contraseña incorrectos. Verifica tus datos e intenta de nuevo.</div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label>Usuario o correo electrónico</label>
+          <input type="text" id="loginUser" placeholder="tu@correo.com" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn-gold btn-lg btn-full" id="loginBtn">Entrar al portal</button>
+      </form>
+
+      <div class="login-separator">
+        <p>¿Aún no eres distribuidor? <a href="oportunidad.html#formulario">Solicita información aquí</a></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const form = document.getElementById('loginForm');
+  const errorBox = document.getElementById('loginError');
+  const loginBtn = document.getElementById('loginBtn');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+
+    errorBox.classList.remove('visible');
+    loginBtn.classList.add('login-btn-loading');
+    loginBtn.textContent = 'Verificando';
+
+    // Simulate auth delay
+    setTimeout(function() {
+      if ((user === 'demo' || user === 'demo@gbforce.com') && pass === 'gbforce2024') {
+        sessionStorage.setItem('gbforce_user', user);
+        window.location.href = 'dashboard.html';
+      } else {
+        errorBox.classList.add('visible');
+        loginBtn.classList.remove('login-btn-loading');
+        loginBtn.textContent = 'Entrar al portal';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginPass').focus();
+      }
+    }, 900);
+  });
+</script>
+</body>
+</html>

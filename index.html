@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GB FORCE — Energía, enfoque y vitalidad | Grupo Bidao</title>
+<meta name="description" content="GB FORCE apoya tu energía, enfoque y vitalidad diaria. Un vial de 10ml al día, presentación de 7 días. Ingredientes funcionales con respaldo técnico.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20información%20sobre%20GB%20FORCE" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- HEADER -->
+<header id="header" class="header">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-gb">GB</span><span class="logo-force">FORCE</span>
+      <span class="logo-sub">by Grupo Bidao</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#producto">Producto</a>
+      <a href="#ingredientes">Ingredientes</a>
+      <a href="#beneficios">Beneficios</a>
+      <a href="#comprar">Comprar</a>
+      <a href="#faq">FAQ</a>
+      <a href="oportunidad.html" class="nav-dist-mobile-link">Quiero ser distribuidor</a>
+    </nav>
+    <div class="header-ctas">
+      <a href="oportunidad.html" class="nav-dist-cta">Quiero ser distribuidor</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badges">
+        <span class="badge">Energía sin picos</span>
+        <span class="badge">Una semana en una caja</span>
+        <span class="badge">Fórmula con respaldo</span>
+      </div>
+      <h1 class="hero-title">Más energía. Más enfoque.<br><em>Más de ti, cada día.</em></h1>
+      <p class="hero-sub">GB FORCE es un suplemento alimenticio en viales de 10ml que apoya tu energía, concentración y vitalidad. Para quienes no pueden darse el lujo de rendir a medias.</p>
+      <p class="hero-micro">Un vial. Un día. Un paso adelante.</p>
+      <div class="hero-ctas">
+        <a href="#comprar" class="btn-gold btn-lg">Comprar ahora</a>
+        <a href="#producto" class="btn-outline btn-lg">Ver cómo funciona</a>
+      </div>
+      <div class="hero-pills">
+        <div class="pill"><span class="pill-icon">⚡</span>Apoya la energía sin picos ni bajones</div>
+        <div class="pill"><span class="pill-icon">🧠</span>Contribuye al foco y claridad mental</div>
+        <div class="pill"><span class="pill-icon">💪</span>Apoya la resistencia y recuperación</div>
+        <div class="pill"><span class="pill-icon">📦</span>7 viales — una semana completa</div>
+        <div class="pill"><span class="pill-icon">🔬</span>Ingredientes funcionales con respaldo</div>
+      </div>
+    </div>
+    <div class="hero-video-wrap">
+      <div class="hero-video-placeholder">
+        <video id="heroVideo" class="hero-video-bg" autoplay muted loop playsinline>
+          <source src="assets/gbforce-hero.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-overlay"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO MODAL -->
+<div class="modal" id="videoModal">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="video-container">
+      <video id="modalVideo" controls style="width:100%;height:100%;display:block;background:#000;">
+        <source src="assets/gbforce-product.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<section class="section-dark" id="problema">
+  <div class="container">
+    <div class="section-label">No siempre es falta de actitud</div>
+    <h2 class="section-title">A veces tu cuerpo simplemente necesita apoyo para sostener el ritmo.</h2>
+    <p class="section-sub">Las jornadas exigentes desgastan. Lo que parece falta de motivación puede ser una señal de que tu cuerpo necesita más de lo que una buena noche de sueño puede dar.</p>
+    <div class="problems-grid">
+      <div class="problem-card fade-up" style="transition-delay:0s">
+        <span class="problem-card-num">01</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">⏰</div></div>
+        <h3>Jornadas largas</h3>
+        <p>Horas de trabajo sin pausa. GB FORCE apoya la vitalidad para que el cansancio no decida por ti.</p>
+      </div>
+      <div class="problem-card fade-up" style="transition-delay:0.08s">
+        <span class="problem-card-num">02</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">🔋</div></div>
+        <h3>Cansancio acumulado</h3>
+        <p>No es de un día. Es semanas encima de semanas. El cuerpo necesita apoyo sostenido, no solo café.</p>
+      </div>
+      <div class="problem-card fade-up" style="transition-delay:0.16s">
+        <span class="problem-card-num">03</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">🧠</div></div>
+        <h3>Falta de concentración</h3>
+        <p>La mente quiere, pero algo no responde. GB FORCE contribuye al foco y la claridad cuando más se necesitan.</p>
+      </div>
+      <div class="problem-card fade-up" style="transition-delay:0.24s">
+        <span class="problem-card-num">04</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">😤</div></div>
+        <h3>Estrés diario</h3>
+        <p>Presión constante que drena la energía antes de que llegue la noche. Un complemento práctico para acompañar la rutina.</p>
+      </div>
+      <div class="problem-card fade-up" style="transition-delay:0.32s">
+        <span class="problem-card-num">05</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">🏃</div></div>
+        <h3>Rutinas exigentes</h3>
+        <p>Entrenas, trabajas, te esfuerzas. GB FORCE apoya la recuperación para que el ritmo no te gane.</p>
+      </div>
+      <div class="problem-card problem-card-highlight fade-up" style="transition-delay:0.4s">
+        <span class="problem-card-num">06</span>
+        <div class="problem-icon-wrap"><div class="problem-icon">💡</div></div>
+        <h3>La diferencia</h3>
+        <p>No se trata de hacer más por obligación. Se trata de <strong>tener el impulso para volver a tomar control.</strong></p>
+      </div>
+    </div>
+    <div class="section-cta-wrap">
+      <a href="#comprar" class="btn-gold btn-lg section-cta-btn">Comprar GB FORCE</a>
+    </div>
+  </div>
+</section>
+
+<!-- QUÉ ES GB FORCE -->
+<section class="section-gold-line" id="producto">
+  <div class="container">
+    <div class="section-label">El producto</div>
+    <h2 class="section-title">GB FORCE: energía, enfoque y vitalidad en una fórmula práctica</h2>
+    <div class="product-layout">
+      <div class="product-info">
+        <div class="product-specs">
+          <div class="spec-item">
+            <div class="spec-num">7</div>
+            <div class="spec-label">Viales por presentación</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-num">10ml</div>
+            <div class="spec-label">Por vial</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-num">1/día</div>
+            <div class="spec-label">Preferente mañana</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-num">Oral</div>
+            <div class="spec-label">Vía de consumo</div>
+          </div>
+        </div>
+        <p class="product-desc">Un vial diario para personas que no pueden rendirse a medias. Apoya la energía, la concentración y la vitalidad sin rituales largos ni complicaciones.</p>
+        <ul class="product-benefits">
+          <li>Apoya la energía y vitalidad desde la mañana</li>
+          <li>Contribuye al enfoque y la claridad mental</li>
+          <li>Ayuda a reducir la fatiga muscular y física</li>
+          <li>Sin mezclar ni medir — ábrelo y tómalo</li>
+          <li>Presentación de 7 días, cómoda y portable</li>
+        </ul>
+        <a href="#comprar" class="btn-gold">Conseguirlo ahora</a>
+      </div>
+      <div class="product-visual">
+        <div class="product-video-wrap">
+          <video id="productVideo" class="product-video" autoplay muted loop playsinline title="Haz clic para ver en pantalla completa">
+            <source src="assets/gbforce-product.mp4" type="video/mp4">
+          </video>
+          <div class="product-video-hint">▶ Haz clic para ampliar</div>
+        </div>
+        <div class="product-disclaimer">
+          GB FORCE es un suplemento alimenticio. No es un medicamento. No sustituye una dieta equilibrada ni tratamientos médicos.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INGREDIENTES -->
+<section class="section-dark" id="ingredientes">
+  <div class="container">
+    <div class="section-label">Lo que hay adentro</div>
+    <h2 class="section-title">Cada ingrediente tiene una razón de estar ahí</h2>
+    <p class="section-sub">Sin rellenos, sin promesas vacías. Una fórmula con componentes funcionales que trabajan juntos para apoyar tu energía, mente y resistencia.</p>
+    <div class="ingredients-grid">
+      <div class="ingredient-card">
+        <div class="ing-icon">🩸</div>
+        <h3>L-Arginina</h3>
+        <p>Apoya la circulación y el rendimiento físico. Precursor natural del óxido nítrico.</p>
+        <span class="ing-tag">Circulación · Rendimiento</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">🧘</div>
+        <h3>Inositol</h3>
+        <p>Apoya el equilibrio emocional, la función mental y el estado de ánimo.</p>
+        <span class="ing-tag">Mente · Equilibrio</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">🥕</div>
+        <h3>Extracto de Zanahoria</h3>
+        <p>Antioxidantes y nutrientes esenciales que cuidan el organismo desde adentro.</p>
+        <span class="ing-tag">Antioxidante · Nutrición</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">⚡</div>
+        <h3>Cafeína</h3>
+        <p>Apoyo a la energía, la alerta y la concentración. Activación sin excesos.</p>
+        <span class="ing-tag">Energía · Alerta</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">🔬</div>
+        <h3>Complejo B</h3>
+        <p>Vitaminas del grupo B para el metabolismo energético, sistema nervioso y función cerebral.</p>
+        <span class="ing-tag">Metabolismo · Nervioso</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">💪</div>
+        <h3>Taurina</h3>
+        <p>Apoya la resistencia física y la vitalidad. Presente en tejidos musculares clave.</p>
+        <span class="ing-tag">Resistencia · Vitalidad</span>
+      </div>
+      <div class="ingredient-card">
+        <div class="ing-icon">🔋</div>
+        <h3>Ácido Málico</h3>
+        <p>Participa en procesos de energía celular. Apoya la reducción de fatiga muscular.</p>
+        <span class="ing-tag">Energía celular · Fatiga</span>
+      </div>
+    </div>
+    <div class="section-cta-wrap">
+      <a href="#comprar" class="btn-gold btn-lg section-cta-btn">Quiero sentir la diferencia</a>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIADOR -->
+<section class="section-light-dark" id="diferenciador">
+  <div class="container">
+    <div class="section-label">Por qué es diferente</div>
+    <h2 class="section-title">No es otro suplemento más.</h2>
+    <div class="rebel-quote">"El mercado está lleno de promesas vacías. GB FORCE apuesta por una fórmula clara, una presentación práctica y una marca que habla con argumentos."</div>
+    <div class="differentiator-points">
+      <div class="differentiator-point">
+        <span class="diff-point-icon">🔬</span>
+        <div>
+          <h3>Fórmula clara</h3>
+          <p>7 ingredientes funcionales con nombre y función conocida. Sabes exactamente qué estás consumiendo.</p>
+        </div>
+      </div>
+      <div class="differentiator-point">
+        <span class="diff-point-icon">📦</span>
+        <div>
+          <h3>Presentación práctica</h3>
+          <p>Viales de 10ml. Sin medir, sin mezclar, sin preparar. Ábrelo y tómalo donde estés.</p>
+        </div>
+      </div>
+      <div class="differentiator-point">
+        <span class="diff-point-icon">⚫</span>
+        <div>
+          <h3>Imagen premium</h3>
+          <p>Negro y dorado. Una marca diseñada para diferenciarse de los suplementos genéricos y coloridos del mercado.</p>
+        </div>
+      </div>
+      <div class="differentiator-point">
+        <span class="diff-point-icon">🚫</span>
+        <div>
+          <h3>Sin exageraciones</h3>
+          <p>No prometemos lo que no podemos garantizar. Apoya, contribuye, acompaña. Sin milagros ni afirmaciones absolutas.</p>
+        </div>
+      </div>
+      <div class="differentiator-point">
+        <span class="diff-point-icon">📋</span>
+        <div>
+          <h3>Respaldo técnico</h3>
+          <p>Ficha técnica disponible. Ingredientes reconocibles. Información para quien quiere entender lo que consume.</p>
+        </div>
+      </div>
+      <div class="differentiator-point">
+        <span class="diff-point-icon">🎯</span>
+        <div>
+          <h3>Para personas activas</h3>
+          <p>No para quien busca un atajo. Para quien ya se esfuerza y quiere un apoyo concreto, no una ilusión.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section class="section-light-dark" id="beneficios">
+  <div class="container">
+    <div class="section-label">¿Por qué GB FORCE?</div>
+    <h2 class="section-title">Para quienes el día no espera</h2>
+    <p class="section-sub">Cada día trae sus propias exigencias. GB FORCE te ayuda a responderlas.</p>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-card-icon">⚡</div>
+        <div>
+          <h3>Energía sostenida</h3>
+          <p>No más bajones a las 3pm. GB FORCE apoya tu vitalidad para que termines el día con el mismo nivel de energía con el que lo empezaste.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card-icon">🧠</div>
+        <div>
+          <h3>Claridad mental</h3>
+          <p>El ruido no para, pero tu foco puede mantenerse. Inositol, Complejo B y Cafeína trabajan juntos para apoyar la concentración cuando más la necesitas.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card-icon">💪</div>
+        <div>
+          <h3>Recuperación activa</h3>
+          <p>Las jornadas largas desgastan. Ácido Málico y Taurina contribuyen a reducir la fatiga para que puedas volver al 100% al día siguiente.</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card-icon">📦</div>
+        <div>
+          <h3>Listo para tu ritmo</h3>
+          <p>Un vial de 10ml. Sin medir, sin mezclar. Ábrelo, tómalo y sigue con tu día. Una caja = siete días de apoyo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO TOMARLO -->
+<section class="section-dark" id="como-tomarlo">
+  <div class="container">
+    <div class="section-label">Modo de uso</div>
+    <h2 class="section-title">Simple de integrar a cualquier rutina</h2>
+    <p class="section-sub">Sin preparaciones, sin complicaciones. Un vial al día es todo lo que necesitas.</p>
+    <div class="how-to-steps">
+      <div class="how-to-step">
+        <div class="how-to-step-icon">🌅</div>
+        <h3>Por la mañana</h3>
+        <p>Preferentemente al inicio del día para apoyar tu energía desde temprano.</p>
+      </div>
+      <div class="how-to-step">
+        <div class="how-to-step-icon">💧</div>
+        <h3>1 vial al día</h3>
+        <p>10ml de consumo oral. Sin medir ni mezclar, directo del vial.</p>
+      </div>
+      <div class="how-to-step">
+        <div class="how-to-step-icon">📦</div>
+        <h3>7 días de apoyo</h3>
+        <p>Cada caja contiene 7 viales. Una caja, una semana completa de respaldo.</p>
+      </div>
+      <div class="how-to-step">
+        <div class="how-to-step-icon">🌡️</div>
+        <h3>Menos de 30°C</h3>
+        <p>Conservar en lugar fresco, fuera de la luz solar directa.</p>
+      </div>
+    </div>
+    <div class="how-to-note">
+      <strong>Nota importante:</strong> GB FORCE es un suplemento alimenticio. No es un medicamento. No sustituye una dieta equilibrada ni tratamientos médicos. Ante cualquier condición de salud, consulta a tu médico antes de consumirlo.
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO ADQUIRIRLO -->
+<section class="section-buy" id="comprar">
+  <div class="container">
+    <div class="section-label">Adquiérelo</div>
+    <h2 class="section-title">¿Listo para sentir la diferencia?</h2>
+    <p class="section-sub">Pide tu presentación semanal directamente por WhatsApp. Envíos a toda la República Mexicana.</p>
+    <div class="buy-box">
+      <div class="buy-product-info">
+        <div class="buy-badge">Presentación semanal</div>
+        <div class="buy-product-name">GB FORCE</div>
+        <div class="buy-product-specs">7 viales · 10ml por vial · Vía oral</div>
+        <div class="buy-price-amount">$650</div>
+        <div class="buy-price-currency">MXN por caja</div>
+        <div class="buy-price-sub">Envíos a toda la República Mexicana. Compra directamente en línea o por WhatsApp.</div>
+      </div>
+      <div class="buy-ctas">
+        <a href="[URL_TIENDA]" class="btn-gold btn-lg buy-online-btn">Comprar ahora</a>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20comprar%20GB%20FORCE.%20¿Cómo%20hago%20mi%20pedido?" class="btn-whatsapp btn-lg" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Comprar por WhatsApp
+        </a>
+      </div>
+      <p class="buy-disclaimer">GB FORCE es un suplemento alimenticio. No es un medicamento. Resultados pueden variar según cada persona.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASOS DE USO -->
+<section class="section-dark" id="para-quien">
+  <div class="container">
+    <div class="section-label">¿Para quién es?</div>
+    <h2 class="section-title">Diseñado para quienes tienen días exigentes y no quieren rendirse a medio camino.</h2>
+    <p class="section-sub">GB FORCE no es para todo el mundo. Es para quienes ya se esfuerzan y quieren un apoyo concreto para seguir adelante.</p>
+    <div class="use-cases-grid">
+      <div class="use-case-card">
+        <div class="use-case-icon">💼</div>
+        <h3>Profesionales intensos</h3>
+        <p>Reuniones, pantallas, decisiones. Jornadas de 10 horas que requieren energía y claridad hasta el final del día.</p>
+        <div class="use-case-tag">Energía sostenida · Claridad</div>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">🏋️</div>
+        <h3>Deportistas recreativos</h3>
+        <p>Entrenamiento antes o después del trabajo. El cuerpo necesita apoyo para rendir en ambos frentes.</p>
+        <div class="use-case-tag">Rendimiento · Recuperación</div>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">🚀</div>
+        <h3>Emprendedores</h3>
+        <p>Sin horarios fijos, con presión constante. GB FORCE apoya el enfoque cuando hay demasiado en qué pensar.</p>
+        <div class="use-case-tag">Enfoque · Vitalidad</div>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">🩺</div>
+        <h3>Profesionales de salud</h3>
+        <p>Turnos largos, alta responsabilidad. Un complemento práctico para sostener el ritmo sin interrupciones.</p>
+        <div class="use-case-tag">Resistencia · Alerta</div>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">📚</div>
+        <h3>Estudiantes exigentes</h3>
+        <p>Temporadas de estudio intenso donde la concentración y la energía determinan los resultados.</p>
+        <div class="use-case-tag">Concentración · Enfoque</div>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">⚡</div>
+        <h3>Rutinas activas en general</h3>
+        <p>Cualquier persona con una vida ocupada que quiere apoyo para no perder el paso cuando más importa.</p>
+        <div class="use-case-tag">Energía · Bienestar</div>
+      </div>
+    </div>
+    <div class="section-cta-wrap">
+      <a href="#comprar" class="btn-gold btn-lg section-cta-btn">Comprar GB FORCE</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ CONSUMIDOR -->
+<section class="section-faq" id="faq">
+  <div class="container">
+    <div class="section-label">Preguntas frecuentes</div>
+    <h2 class="section-title">Resolvemos tus dudas</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button class="faq-q">¿GB FORCE es un medicamento? <span>+</span></button>
+        <div class="faq-a"><p>No. GB FORCE es un suplemento alimenticio. No es un medicamento, no trata enfermedades ni sustituye tratamientos médicos. Apoya la energía, vitalidad y bienestar general como complemento a una dieta equilibrada.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cómo se consume GB FORCE? <span>+</span></button>
+        <div class="faq-a"><p>Un vial de 10 ml por día, preferentemente por la mañana. Vía oral. Cada presentación contiene 7 viales, equivalente a una semana de consumo.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cuántos viales trae una presentación? <span>+</span></button>
+        <div class="faq-a"><p>Cada caja contiene 7 viales de 10 ml. Una caja = una semana de consumo diario.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cuándo empiezo a sentir los efectos? <span>+</span></button>
+        <div class="faq-a"><p>Al ser un suplemento alimenticio, su acción es progresiva. Los resultados varían según la persona, su condición física y estilo de vida. Muchos usuarios reportan mejoras en energía y concentración durante las primeras semanas de consumo regular.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cómo puedo adquirir GB FORCE? <span>+</span></button>
+        <div class="faq-a"><p>Puedes hacer tu pedido directamente por WhatsApp o a través de nuestra tienda en línea. Hacemos envíos a toda la República Mexicana. Escríbenos y con gusto te ayudamos con tu primer pedido.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Quién puede consumir GB FORCE? <span>+</span></button>
+        <div class="faq-a"><p>Adultos que buscan apoyo en su energía, enfoque y vitalidad diaria: profesionales con jornadas intensas, deportistas, emprendedores y cualquier persona con rutinas demandantes. No recomendado para embarazadas, menores de edad ni personas bajo tratamiento médico sin consulta previa.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿GB FORCE contiene cafeína? <span>+</span></button>
+        <div class="faq-a"><p>Sí. GB FORCE contiene cafeína entre sus ingredientes, la cual contribuye al apoyo de la energía, la alerta y la concentración. Si eres sensible a la cafeína o tienes alguna condición relacionada, consulta a tu médico antes de consumirlo.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cuándo se recomienda tomarlo? <span>+</span></button>
+        <div class="faq-a"><p>Preferentemente por la mañana, para aprovechar el apoyo a la energía y el enfoque durante las horas más activas del día. Evita consumirlo cerca de la hora de dormir si eres sensible a la cafeína.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Cuánto tarda el envío? <span>+</span></button>
+        <div class="faq-a"><p>Los tiempos de entrega varían según la zona. En general, los envíos dentro de la República Mexicana llegan en un plazo de 3 a 7 días hábiles. Al hacer tu pedido recibirás información específica sobre el tiempo estimado para tu código postal.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Puedo comprar por WhatsApp? <span>+</span></button>
+        <div class="faq-a"><p>Sí. Puedes hacer tu pedido directamente por WhatsApp y un asesor te guiará en el proceso. También puedes comprar a través de nuestra tienda en línea de forma directa. Ambas opciones están disponibles con envío a toda la República Mexicana.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">¿Puedo vender GB FORCE? <span>+</span></button>
+        <div class="faq-a"><p>Sí. GB FORCE tiene un programa de distribuidores para quienes quieren representar la marca en su zona. Si te interesa conocer el modelo comercial, márgenes y proceso de alta, visita nuestra <a href="oportunidad.html" style="color:var(--gold)">página de distribuidores</a>.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="section-closing">
+  <div class="container">
+    <div class="closing-content">
+      <h2 class="closing-title">No es una promesa.<br><em>Es una fórmula.</em></h2>
+      <p class="closing-sub">Con ingredientes funcionales respaldados y sin promesas vacías. GB FORCE se presenta con lo que tiene: una fórmula clara, un consumo práctico y resultados que puedes sentir.</p>
+      <p class="closing-wa-text">¿Tienes dudas? Escríbenos, con gusto te atendemos.</p>
+      <div class="closing-ctas">
+        <a href="#comprar" class="btn-gold btn-xl">Comprar ahora</a>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20información%20sobre%20GB%20FORCE" class="btn-whatsapp btn-xl" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+      <p class="closing-micro">No es suerte. Es una decisión.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEASER DISTRIBUIDORES -->
+<section class="distributor-teaser">
+  <div class="distributor-teaser-content">
+    <div class="distributor-teaser-label">Oportunidad de negocio</div>
+    <h3>¿Te interesa vender GB FORCE?</h3>
+    <div class="distributor-teaser-stats">
+      <span class="distributor-teaser-stat">38.6% de margen estimado</span>
+      <span class="distributor-teaser-stat">Consumo semanal recurrente</span>
+      <span class="distributor-teaser-stat">Sistema comercial listo</span>
+    </div>
+    <p>Si tienes una red de contactos y quieres representar una marca con argumento, sistema listo y margen real, el programa de distribuidores está diseñado para ti.</p>
+    <a href="oportunidad.html" class="btn-gold">Conocer programa de distribuidores →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><span class="logo-gb">GB</span><span class="logo-force">FORCE</span></div>
+        <p>by Grupo Bidao</p>
+        <p class="footer-disclaimer">GB FORCE es un suplemento alimenticio. No es un medicamento. No sustituye una dieta equilibrada ni tratamientos médicos.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navegación</h4>
+        <a href="#producto">El producto</a>
+        <a href="#ingredientes">Ingredientes</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#comprar">Comprar</a>
+        <a href="#faq">Preguntas frecuentes</a>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <a href="#">Aviso de privacidad</a>
+        <a href="#">Términos y condiciones</a>
+        <a href="#">Política de cookies</a>
+      </div>
+      <div class="footer-contact">
+        <h4>Contacto</h4>
+        <p>Grupo Bidao</p>
+        <a href="mailto:contacto@grupobidao.com">contacto@grupobidao.com</a>
+        <a href="https://wa.me/521XXXXXXXXXX" target="_blank">WhatsApp: +52 1 XX XXXX XXXX</a>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-dist-link">
+        <a href="oportunidad.html">¿Te interesa distribuir GB FORCE? Conoce la oportunidad de negocio →</a>
+      </div>
+      <p>© 2024 Grupo Bidao. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
