@@ -277,40 +277,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── MEXICO MAP (D3.js + GeoJSON) ──
-  const mapData = {
-    'Baja California':    { distribuidores: [{ nombre: 'Dist. TJ Norte', ciudad: 'Tijuana', tipo: 'Distribuidor autorizado', wa: '526641000000' }] },
-    'Baja California Sur':{ distribuidores: [] },
-    'Sonora':             { distribuidores: [] },
-    'Chihuahua':          { distribuidores: [{ nombre: 'GB Chihuahua', ciudad: 'Chihuahua', tipo: 'Distribuidor autorizado', wa: '526141000000' }] },
-    'Coahuila':           { distribuidores: [] },
-    'Nuevo León':         { distribuidores: [{ nombre: 'Dist. Monterrey Premium', ciudad: 'Monterrey', tipo: 'Distribuidor autorizado', wa: '528181000000' }, { nombre: 'Suplementos NL', ciudad: 'San Pedro Garza García', tipo: 'Punto de venta', wa: '528181000001' }] },
-    'Tamaulipas':         { distribuidores: [] },
-    'Sinaloa':            { distribuidores: [] },
-    'Durango':            { distribuidores: [] },
-    'Zacatecas':          { distribuidores: [] },
-    'San Luis Potosí':    { distribuidores: [] },
-    'Nayarit':            { distribuidores: [] },
-    'Jalisco':            { distribuidores: [{ nombre: 'GB Force Jalisco', ciudad: 'Guadalajara', tipo: 'Distribuidor autorizado', wa: '523311000000' }] },
-    'Aguascalientes':     { distribuidores: [] },
-    'Guanajuato':         { distribuidores: [] },
-    'Querétaro':          { distribuidores: [] },
-    'Hidalgo':            { distribuidores: [] },
-    'Michoacán':          { distribuidores: [] },
-    'Estado de México':   { distribuidores: [{ nombre: 'Dist. EDOMEX Centro', ciudad: 'Toluca', tipo: 'Distribuidor autorizado', wa: '527221000000' }] },
-    'Ciudad de México':   { distribuidores: [{ nombre: 'GB Force CDMX', ciudad: 'Ciudad de México', tipo: 'Distribuidor autorizado', wa: '525591000000' }, { nombre: 'Bienestar Sur CDMX', ciudad: 'Xochimilco', tipo: 'Punto de venta', wa: '525591000001' }] },
-    'Morelos':            { distribuidores: [] },
-    'Tlaxcala':           { distribuidores: [] },
-    'Puebla':             { distribuidores: [{ nombre: 'Dist. Puebla Norte', ciudad: 'Puebla', tipo: 'Distribuidor autorizado', wa: '522221000000' }] },
-    'Veracruz':           { distribuidores: [] },
-    'Colima':             { distribuidores: [] },
-    'Guerrero':           { distribuidores: [] },
-    'Oaxaca':             { distribuidores: [] },
-    'Chiapas':            { distribuidores: [] },
-    'Tabasco':            { distribuidores: [] },
-    'Campeche':           { distribuidores: [] },
-    'Yucatán':            { distribuidores: [{ nombre: 'GB Force Yucatán', ciudad: 'Mérida', tipo: 'Distribuidor autorizado', wa: '529991000000' }] },
-    'Quintana Roo':       { distribuidores: [] },
-  };
+  const ESTADOS_MEXICO = [
+    'Baja California', 'Baja California Sur', 'Sonora', 'Chihuahua', 'Coahuila',
+    'Nuevo León', 'Tamaulipas', 'Sinaloa', 'Durango', 'Zacatecas', 'San Luis Potosí',
+    'Nayarit', 'Jalisco', 'Aguascalientes', 'Guanajuato', 'Querétaro', 'Hidalgo',
+    'Michoacán', 'Estado de México', 'Ciudad de México', 'Morelos', 'Tlaxcala',
+    'Puebla', 'Veracruz', 'Colima', 'Guerrero', 'Oaxaca', 'Chiapas', 'Tabasco',
+    'Campeche', 'Yucatán', 'Quintana Roo'
+  ];
+
+  let mapData = {};
+
+  async function loadDistribuidores() {
+    const BASE_ID = 'appPww1ELY4fHjRDc';
+    const TABLE_ID = 'tbllfzAtEr6mv5rOH';
+    const PAT = 'patjfm1TGYeVYZrXe.7ec514e9c4e7e35da1735644b178301b269f5d26bb15123d91b47d7ba55b7a4a';
+
+    ESTADOS_MEXICO.forEach(e => { mapData[e] = { distribuidores: [] }; });
+
+    try {
+      let offset = '';
+      do {
+        const url = 'https://api.airtable.com/v0/' + BASE_ID + '/' + TABLE_ID +
+          '?filterByFormula={Activo}=TRUE()' + (offset ? '&offset=' + offset : '');
+        const res = await fetch(url, { headers: { Authorization: 'Bearer ' + PAT } });
+        const data = await res.json();
+        if (data.records) {
+          data.records.forEach(r => {
+            const f = r.fields;
+            if (f.Estado && mapData[f.Estado]) {
+              mapData[f.Estado].distribuidores.push({
+                nombre: f.Nombre || '',
+                ciudad: f.Ciudad || '',
+                municipio: f.Municipio || '',
+                wa: f.WhatsApp || ''
+              });
+            }
+          });
+        }
+        offset = data.offset || '';
+      } while (offset);
+    } catch (e) {
+      console.error('Error cargando distribuidores:', e);
+    }
+  }
 
   // Normalize GeoJSON state names to match mapData keys
   function normalizeStateName(name) {
@@ -345,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="zone-available"><div class="zone-badge">Zona disponible</div><p>Esta zona está disponible para nuevos distribuidores autorizados. Sé el primero en representar GB FORCE en <strong>${stateName}</strong>.</p><a href="#formulario" class="btn-gold">Quiero tomar esta zona</a></div>`;
     } else {
       dists.forEach(d => {
-        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div><div class="dist-city">📍 ${d.ciudad}, ${stateName}</div><div class="dist-type">${d.tipo}</div><div class="dist-contact"><a href="https://wa.me/${d.wa}?text=Hola,%20encontré%20tu%20contacto%20en%20GB%20FORCE" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
+        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div><div class="dist-city">📍 ${d.ciudad}${d.municipio ? ', ' + d.municipio : ''}</div></div>`;
       });
       html += `<a href="#formulario" class="btn-ghost" style="margin-top:1rem;display:inline-flex;">Ser distribuidor en ${stateName}</a>`;
     }
@@ -517,11 +527,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (mapContainer) {
-    initD3Map();
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initD3Map, 300);
+    loadDistribuidores().then(() => {
+      initD3Map();
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(initD3Map, 300);
+      });
     });
   }
 
