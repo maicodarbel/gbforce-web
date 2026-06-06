@@ -442,6 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mapLoading = document.getElementById('mapLoading');
   let selectedNode = null;
   let currentFilter = 'todos';
+  let mapSvg = null;
 
   function renderStatePanel(stateName) {
     const data = mapData[stateName];
@@ -477,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const w = mapContainer.clientWidth || 700;
     const h = Math.round(w * 0.6);
     const svg = d3.select('#mapSvg').attr('width', w).attr('height', h);
+    mapSvg = svg;
     svg.selectAll('*').remove();
 
     const geo = window.MEXICO_GEO;
@@ -597,23 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyFilter(paths);
 
-    // State select
-    if (mapStateSelect) {
-      mapStateSelect.addEventListener('change', () => {
-        const sn = mapStateSelect.value;
-        if (!sn) return;
-        svg.selectAll('path').each(function(d) {
-          const pathSn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
-          if (pathSn === sn) {
-            if (selectedNode) d3.select(selectedNode).classed('selected', false).classed('hovered', false);
-            selectedNode = this;
-            d3.select(this).classed('selected', true);
-            renderStatePanel(sn);
-          }
-        });
-      });
-    }
-
     // Filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -621,6 +606,24 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
         applyFilter(svg.selectAll('path'));
+      });
+    });
+  }
+
+  // Select listener — registrado una sola vez, antes de que cargue el mapa
+  if (mapStateSelect) {
+    mapStateSelect.addEventListener('change', () => {
+      if (!mapSvg) return;
+      const sn = mapStateSelect.value;
+      if (!sn) return;
+      mapSvg.selectAll('path').each(function(d) {
+        const pathSn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
+        if (pathSn === sn) {
+          if (selectedNode) d3.select(selectedNode).classed('selected', false).classed('hovered', false);
+          selectedNode = this;
+          d3.select(this).classed('selected', true);
+          renderStatePanel(sn);
+        }
       });
     });
   }
