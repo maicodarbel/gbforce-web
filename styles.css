@@ -492,6 +492,9 @@ img { max-width: 100%; display: block; }
   gap: 0.5rem;
   font-size: 1rem;
   letter-spacing: 0.08em;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
 }
 .section-cta-btn::after {
   content: '→';
