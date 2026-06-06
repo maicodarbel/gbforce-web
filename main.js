@@ -6,19 +6,83 @@ const N8N_WEBHOOK_URL = 'https://n8n.guiahudumaliving.online/webhook/gbforce-lea
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── REF PARAM → campo oculto ──
-  const refParam = new URLSearchParams(window.location.search).get('ref');
+  // ── URL PARAMS: ref + UTM/tracking ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const refParam = urlParams.get('ref');
   const referidoPorInput = document.getElementById('referido_por');
   if (refParam && referidoPorInput) referidoPorInput.value = refParam;
 
-  // ── TOGGLE referido_nombre según fue_referido ──
+  const trackingData = {
+    utm_source:    urlParams.get('utm_source')    || '',
+    utm_medium:    urlParams.get('utm_medium')    || '',
+    utm_campaign:  urlParams.get('utm_campaign')  || '',
+    utm_content:   urlParams.get('utm_content')   || '',
+    utm_term:      urlParams.get('utm_term')      || '',
+    fbclid:        urlParams.get('fbclid')        || '',
+    landing_page:  window.location.pathname,
+    form_version:  'v2',
+    ad_name:       urlParams.get('ad_name')       || '',
+    adset_name:    urlParams.get('adset_name')    || '',
+    campaign_name: urlParams.get('campaign_name') || '',
+  };
+
+  // ── MUNICIPIO CASCADE ──
+  const estadoSelect = document.getElementById('estado');
+  const municipioSelect = document.getElementById('municipio');
+  if (estadoSelect && municipioSelect) {
+    estadoSelect.addEventListener('change', () => {
+      const municipios = (window.MUNICIPIOS_MX || {})[estadoSelect.value] || [];
+      municipioSelect.innerHTML = '<option value="">Selecciona tu municipio</option>';
+      municipios.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        municipioSelect.appendChild(opt);
+      });
+      municipioSelect.disabled = municipios.length === 0;
+    });
+  }
+
+  // ── PHONE MASK xx-xxxx-xxxx ──
+  const telInput = document.getElementById('telefono');
+  const telError = document.getElementById('telefono_error');
+  if (telInput) {
+    telInput.addEventListener('input', () => {
+      const digits = telInput.value.replace(/\D/g, '').slice(0, 10);
+      let formatted = digits;
+      if (digits.length > 2) formatted = digits.slice(0, 2) + '-' + digits.slice(2);
+      if (digits.length > 6) formatted = formatted.slice(0, 7) + '-' + digits.slice(6);
+      telInput.value = formatted;
+      if (telError && telInput.value.length > 0) telError.style.display = 'none';
+    });
+    telInput.addEventListener('blur', () => {
+      if (!telError) return;
+      const valid = /^[0-9]{2}-[0-9]{4}-[0-9]{4}$/.test(telInput.value);
+      telError.style.display = telInput.value && !valid ? 'block' : 'none';
+    });
+  }
+
+  // ── EMAIL BLUR VALIDATION ──
+  const correoInput = document.getElementById('correo');
+  const correoError = document.getElementById('correo_error');
+  if (correoInput) {
+    const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    correoInput.addEventListener('blur', () => {
+      if (!correoError) return;
+      correoError.style.display = correoInput.value && !emailOk(correoInput.value) ? 'block' : 'none';
+    });
+    correoInput.addEventListener('input', () => {
+      if (correoError && emailOk(correoInput.value)) correoError.style.display = 'none';
+    });
+  }
+
+  // ── FUE_REFERIDO → mostrar "¿Quién te recomendó?" ──
   const fueReferidoSelect = document.getElementById('fue_referido');
   const referidoNombreGroup = document.getElementById('referido_nombre_group');
   if (fueReferidoSelect && referidoNombreGroup) {
     fueReferidoSelect.addEventListener('change', () => {
-      const show = fueReferidoSelect.value === 'Me recomendó un distribuidor';
+      const show = fueReferidoSelect.value === 'Me recomendó un conocido';
       referidoNombreGroup.style.display = show ? '' : 'none';
-      referidoNombreGroup.querySelector('input').required = show;
     });
   }
 
@@ -46,6 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
       bars[0].style.transform = bars[1].style.opacity = bars[2].style.transform = '';
     });
   });
+
+  // ── NAV HORIZONTAL SCROLL (desktop: wheel → horizontal) ──
+  nav.addEventListener('wheel', (e) => {
+    if (window.innerWidth > 768) {
+      e.preventDefault();
+      nav.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
 
   // ── VIDEO MODAL (product section) ──
   const videoModal = document.getElementById('videoModal');
@@ -171,6 +243,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (distForm) {
     distForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      // Validar checkboxes red_actual
+      const redActualChecks = distForm.querySelectorAll('input[name="red_actual"]');
+      const redActualErrorEl = document.getElementById('red_actual_error');
+      const redActualValues = Array.from(redActualChecks).filter(cb => cb.checked).map(cb => cb.value);
+      if (redActualErrorEl) redActualErrorEl.style.display = redActualValues.length === 0 ? 'block' : 'none';
+      if (redActualValues.length === 0) {
+        document.getElementById('red_actual_group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Validar checkboxes canal_venta
+      const canalVentaChecks = distForm.querySelectorAll('input[name="canal_venta"]');
+      const canalVentaErrorEl = document.getElementById('canal_venta_error');
+      const canalVentaValues = Array.from(canalVentaChecks).filter(cb => cb.checked).map(cb => cb.value);
+      if (canalVentaErrorEl) canalVentaErrorEl.style.display = canalVentaValues.length === 0 ? 'block' : 'none';
+      if (canalVentaValues.length === 0) {
+        document.getElementById('canal_venta_group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Validar teléfono inline al submit
+      const telVal = telInput ? telInput.value : '';
+      if (telError) telError.style.display = telVal && !/^[0-9]{2}-[0-9]{4}-[0-9]{4}$/.test(telVal) ? 'block' : 'none';
+
+      // Validar email inline al submit
+      const correoEl = document.getElementById('correo');
+      const correoVal = correoEl ? correoEl.value.trim() : '';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correoVal)) {
+        if (correoError) correoError.style.display = 'block';
+        correoEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (correoError) correoError.style.display = 'none';
+
       if (!distForm.checkValidity()) {
         distForm.reportValidity();
         return;
@@ -181,23 +288,27 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Enviando...';
 
+      const referidoNombreInput = document.getElementById('referido_nombre');
       const data = {
-        nombre:          distForm.nombre.value.trim(),
-        telefono:        distForm.telefono.value.trim(),
-        correo:          distForm.correo.value.trim(),
-        estado:          distForm.estado.value,
-        ciudad:          distForm.ciudad.value.trim(),
-        perfil:          distForm.perfil.value,
-        experiencia:     distForm.experiencia.value,
-        red_actual:      distForm.red_actual.value,
-        inversion:       distForm.inversion.value,
-        modalidad:       distForm.modalidad.value,
-        comentarios:     distForm.comentarios.value.trim(),
-        fue_referido:    distForm.fue_referido.value,
-        referido_nombre: distForm.referido_nombre.value.trim(),
-        referido_por:    distForm.referido_por.value.trim(),
-        timestamp:       new Date().toISOString(),
-        url_origen:      window.location.href,
+        nombre:             distForm.nombre.value.trim(),
+        apellidos:          distForm.apellidos.value.trim(),
+        telefono:           distForm.telefono.value.replace(/-/g, ''),
+        correo:             distForm.correo.value.trim(),
+        estado:             distForm.estado.value,
+        municipio:          distForm.municipio.value,
+        perfil:             distForm.perfil.value,
+        experiencia:        distForm.experiencia.value,
+        red_actual:         redActualValues.join(', '),
+        etapa:              distForm.etapa.value,
+        capacidad_arranque: distForm.capacidad_arranque.value,
+        canal_venta:        canalVentaValues.join(', '),
+        comentarios:        distForm.comentarios.value.trim(),
+        fue_referido:       distForm.fue_referido.value,
+        referido_nombre:    referidoNombreInput ? referidoNombreInput.value.trim() : '',
+        referido_por:       distForm.referido_por.value.trim(),
+        ...trackingData,
+        timestamp:          new Date().toISOString(),
+        url_origen:         window.location.href,
       };
 
       const errorEl = document.getElementById('formError');
@@ -352,12 +463,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const dists = data.distribuidores;
     let html = `<div class="state-panel-title">${stateName}</div>`;
     if (dists.length === 0) {
-      html += `<div class="zone-available"><div class="zone-badge">Zona disponible</div><p>Esta zona está disponible para nuevos distribuidores autorizados. Sé el primero en representar GB FORCE en <strong>${stateName}</strong>.</p><a href="#formulario" class="btn-gold">Quiero tomar esta zona</a></div>`;
+      html += `<div class="zone-available"><div class="zone-badge">Zona disponible</div><p>Esta zona está disponible para nuevos distribuidores autorizados. Sé el primero en representar GB FORCE en <strong>${stateName}</strong>.</p><a href="oportunidad.html#formulario" class="btn-gold">Quiero tomar esta zona</a></div>`;
     } else {
       dists.forEach(d => {
         html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div><div class="dist-city">📍 ${d.ciudad}${d.municipio ? ', ' + d.municipio : ''}</div><div class="dist-contact"><a href="https://wa.me/${d.wa}?text=Hola,%20encontré%20tu%20contacto%20en%20GB%20FORCE" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
       });
-      html += `<a href="#formulario" class="btn-ghost" style="margin-top:1rem;display:inline-flex;">Ser distribuidor en ${stateName}</a>`;
+      html += `<a href="oportunidad.html#formulario" class="btn-ghost" style="margin-top:1rem;display:inline-flex;">Ser distribuidor en ${stateName}</a>`;
     }
     mapPanel.innerHTML = html;
   }
