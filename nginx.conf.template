@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Proxy a Airtable — token inyectado desde variable de entorno AIRTABLE_TOKEN
+    location /api/distribuidores {
+        proxy_pass https://api.airtable.com/v0/appPww1ELY4fHjRDc/tbllfzAtEr6mv5rOH?filterByFormula=%7BActivo%7D%3DTRUE%28%29&fields%5B%5D=Nombre&fields%5B%5D=Municipio&fields%5B%5D=WhatsApp&fields%5B%5D=Estado&pageSize=100;
+        proxy_set_header Authorization "Bearer ${AIRTABLE_TOKEN}";
+        proxy_set_header Host "api.airtable.com";
+        proxy_ssl_server_name on;
+        proxy_hide_header Access-Control-Allow-Origin;
+        add_header 'Access-Control-Allow-Origin' '*';
+    }
+
+    # HTML: nunca cachear — siempre fresco desde origen
+    location ~* \.html$ {
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+        add_header Pragma "no-cache";
+        try_files $uri $uri/ /index.html;
+    }
+
+    # JS y CSS: cachear 1 hora (el ?v=X en el HTML fuerza nueva descarga al actualizar)
+    location ~* \.(js|css)$ {
+        add_header Cache-Control "public, max-age=3600";
+    }
+
+    # Imágenes y fuentes: cachear 7 días
+    location ~* \.(jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf)$ {
+        add_header Cache-Control "public, max-age=604800";
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

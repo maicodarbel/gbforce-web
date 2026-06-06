@@ -403,15 +403,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ESTADOS_MEXICO.forEach(e => { mapData[e] = { distribuidores: [] }; });
 
     try {
-      const res = await fetch('https://n8n.guiahudumaliving.online/webhook/gbforce-distribuidores');
+      const res = await fetch('/api/distribuidores');
       const data = await res.json();
       if (data.records) {
-        data.records.forEach(d => {
-          if (d.estado && mapData[d.estado]) {
-            mapData[d.estado].distribuidores.push({
-              nombre: d.nombre,
-              municipio: d.municipio,
-              wa: d.wa
+        data.records.forEach(r => {
+          const f = r.fields;
+          if (f.Estado && mapData[f.Estado]) {
+            mapData[f.Estado].distribuidores.push({
+              nombre: f.Nombre || '',
+              municipio: f.Municipio || '',
+              wa: f.WhatsApp || ''
             });
           }
         });
