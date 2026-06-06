@@ -593,8 +593,20 @@ document.addEventListener('DOMContentLoaded', () => {
       .attr('dy', '0.35em')
       .text(d => {
         const sn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
-        const abbrev = { 'Baja California': 'B.C.', 'Baja California Sur': 'B.C.S.', 'San Luis Potosí': 'S.L.P.', 'Estado de México': 'Méx.', 'Nuevo León': 'N.L.' };
-        return abbrev[sn] || (sn.length > 10 ? sn.split(' ')[0] : sn);
+        const abbrev = {
+          'Aguascalientes': 'AGS', 'Baja California': 'BC', 'Baja California Sur': 'BCS',
+          'Campeche': 'CAMP', 'Chiapas': 'CHIS', 'Chihuahua': 'CHIH',
+          'Ciudad de México': 'CDMX', 'Coahuila': 'COAH', 'Colima': 'COL',
+          'Durango': 'DGO', 'Guanajuato': 'GTO', 'Guerrero': 'GRO',
+          'Hidalgo': 'HGO', 'Jalisco': 'JAL', 'Estado de México': 'MEX',
+          'Michoacán': 'MICH', 'Morelos': 'MOR', 'Nayarit': 'NAY',
+          'Nuevo León': 'NL', 'Oaxaca': 'OAX', 'Puebla': 'PUE',
+          'Querétaro': 'QRO', 'Quintana Roo': 'QROO', 'San Luis Potosí': 'SLP',
+          'Sinaloa': 'SIN', 'Sonora': 'SON', 'Tabasco': 'TAB',
+          'Tamaulipas': 'TAMPS', 'Tlaxcala': 'TLAX', 'Veracruz': 'VER',
+          'Yucatán': 'YUC', 'Zacatecas': 'ZAC',
+        };
+        return abbrev[sn] || sn;
       });
 
     applyFilter(paths);
