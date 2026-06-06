@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let offset = '';
       do {
         const url = 'https://api.airtable.com/v0/' + BASE_ID + '/' + TABLE_ID +
-          '?filterByFormula={Activo}=TRUE()' + (offset ? '&offset=' + offset : '');
+          '?filterByFormula={Activo}=TRUE()&fields[]=Nombre&fields[]=Municipio&fields[]=WhatsApp&fields[]=Estado' + (offset ? '&offset=' + offset : '');
         const res = await fetch(url, { headers: { Authorization: 'Bearer ' + PAT } });
         const data = await res.json();
         if (data.records) {
@@ -419,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (f.Estado && mapData[f.Estado]) {
               mapData[f.Estado].distribuidores.push({
                 nombre: f.Nombre || '',
-                ciudad: f.Ciudad || '',
                 municipio: f.Municipio || '',
                 wa: f.WhatsApp || ''
               });
@@ -448,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const mapPanel = document.getElementById('mapPanel');
-  const mapSearch = document.getElementById('mapSearch');
+  const mapStateSelect = document.getElementById('mapStateSelect');
   const mapContainer = document.getElementById('mexicoMap');
   const mapLoading = document.getElementById('mapLoading');
   let selectedNode = null;
@@ -466,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="zone-available"><div class="zone-badge">Zona disponible</div><p>Esta zona está disponible para nuevos distribuidores autorizados. Sé el primero en representar GB FORCE en <strong>${stateName}</strong>.</p><a href="oportunidad.html#formulario" class="btn-gold">Quiero tomar esta zona</a></div>`;
     } else {
       dists.forEach(d => {
-        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div><div class="dist-city">📍 ${d.ciudad}${d.municipio ? ', ' + d.municipio : ''}</div><div class="dist-contact"><a href="https://wa.me/${d.wa}?text=Hola,%20encontré%20tu%20contacto%20en%20GB%20FORCE" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
+        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div>${d.municipio ? `<div class="dist-city">📍 ${d.municipio}</div>` : ''}<div class="dist-contact"><a href="https://wa.me/${d.wa}?text=Hola,%20encontré%20tu%20contacto%20en%20GB%20FORCE" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
       });
       html += `<a href="oportunidad.html#formulario" class="btn-ghost" style="margin-top:1rem;display:inline-flex;">Ser distribuidor en ${stateName}</a>`;
     }
@@ -583,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedNode = this;
         d3.select(this).classed('selected', true);
         const sn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
+        if (mapStateSelect) mapStateSelect.value = sn;
         renderStatePanel(sn);
       });
 
@@ -607,20 +607,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyFilter(paths);
 
-    // Search
-    if (mapSearch) {
-      mapSearch.addEventListener('input', () => {
-        const q = mapSearch.value.toLowerCase().trim();
-        if (!q) return;
-        const match = Object.keys(mapData).find(s => s.toLowerCase().includes(q));
-        if (!match) return;
+    // State select
+    if (mapStateSelect) {
+      mapStateSelect.addEventListener('change', () => {
+        const sn = mapStateSelect.value;
+        if (!sn) return;
         svg.selectAll('path').each(function(d) {
-          const sn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
-          if (sn === match) {
+          const pathSn = normalizeStateName(d.properties.name || d.properties.ESTADO || '');
+          if (pathSn === sn) {
             if (selectedNode) d3.select(selectedNode).classed('selected', false).classed('hovered', false);
             selectedNode = this;
             d3.select(this).classed('selected', true);
-            renderStatePanel(match);
+            renderStatePanel(sn);
           }
         });
       });

@@ -25,7 +25,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
 
 body {
   background: var(--black);
@@ -179,7 +179,7 @@ img { max-width: 100%; display: block; }
   transition: all var(--transition);
   text-decoration: none;
 }
-.whatsapp-float svg { width: 1.8rem; height: 1.8rem; flex-shrink: 0; }
+.whatsapp-float svg { width: 1.8rem; height: 1.8rem; flex-shrink: 0; fill: white; }
 .whatsapp-float-label { font-size: 0.6rem; font-weight: 600; text-align: center; line-height: 1.3; white-space: nowrap; }
 .whatsapp-float:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(37,211,102,0.6); color: #fff; }
 
@@ -1128,17 +1128,20 @@ img { max-width: 100%; display: block; }
 }
 .check-option:hover { border-color: var(--gold); }
 .check-option input[type="checkbox"] {
-  appearance: none; -webkit-appearance: none;
-  width: 20px; height: 20px; flex-shrink: 0; margin: 0;
+  position: absolute; opacity: 0; width: 0; height: 0; margin: 0;
+}
+.chk {
+  width: 20px; height: 20px; flex-shrink: 0;
   border: 2px solid var(--black-border); border-radius: 3px;
   background: var(--black); cursor: pointer; position: relative;
   transition: border-color var(--transition), background var(--transition);
 }
-.check-option input[type="checkbox"]:checked {
+.check-option input[type="checkbox"]:checked + .chk {
   background: var(--gold); border-color: var(--gold);
 }
-.check-option input[type="checkbox"]:checked::after {
+.check-option input[type="checkbox"]:checked + .chk::after {
   content: '✕';
+  display: block;
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   color: #000; font-size: 11px; font-weight: 900; line-height: 1;
@@ -1239,7 +1242,7 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   gap: 0.75rem;
 }
-.map-search input {
+.map-search select {
   background: var(--black-card);
   border: 1px solid var(--black-border);
   border-radius: var(--radius);
@@ -1249,9 +1252,17 @@ img { max-width: 100%; display: block; }
   padding: 0.65rem 1rem;
   outline: none;
   width: 100%;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
   transition: border-color var(--transition);
 }
-.map-search input:focus { border-color: var(--gold); }
+.map-search select:focus { border-color: var(--gold); }
+.map-search select option { background: #1a1a1a; color: var(--white); }
 
 .map-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .filter-btn {
