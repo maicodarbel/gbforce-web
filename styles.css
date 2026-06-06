@@ -2248,6 +2248,6 @@ img { max-width: 100%; display: block; }
   .use-cases-grid { grid-template-columns: 1fr; }
   .how-to-step { min-width: 0; max-width: 100%; }
   .how-to-steps { gap: 1.25rem; }
-  .btn-gold, .btn-ghost { white-space: normal; max-width: 100%; width: 100%; text-align: center; justify-content: center; }
-  .hero-ctas, .closing-ctas { width: 100%; }
+  .btn-gold, .btn-ghost { white-space: normal; max-width: 100%; }
+  .section-cta-btn, .btn-gold.btn-full { width: 100%; text-align: center; justify-content: center; }
 }
