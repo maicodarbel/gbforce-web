@@ -496,10 +496,6 @@ img { max-width: 100%; display: block; }
   white-space: normal;
   text-align: center;
 }
-.section-cta-btn::after {
-  content: '→';
-  font-size: 1.1em;
-}
 
 .section-dark { background: var(--black-soft); }
 .section-gold-line {
