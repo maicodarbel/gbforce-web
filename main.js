@@ -568,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'estado' + (hasDist ? '' : ' disponible');
       })
       .on('mouseenter', function() { d3.select(this).classed('hovered', true); })
-      .on('mouseleave', function() { if (this !== selectedNode) d3.select(this).classed('hovered', false); })
+      .on('mouseleave', function() { d3.select(this).classed('hovered', false); })
       .on('click', function(event, d) {
         if (selectedNode) d3.select(selectedNode).classed('selected', false).classed('hovered', false);
         selectedNode = this;

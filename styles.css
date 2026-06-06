@@ -1299,6 +1299,7 @@ img { max-width: 100%; display: block; }
 .estado.selected { fill: rgba(201,168,76,0.42); stroke: var(--gold-light); stroke-width: 1.8; }
 .estado.disponible { fill: #2a1010; stroke: rgba(201,168,76,0.35); }
 .estado.disponible:hover, .estado.disponible.hovered { fill: #3d1515; stroke: var(--gold); stroke-width: 1.2; }
+.estado.disponible.selected { fill: rgba(201,168,76,0.42); stroke: var(--gold-light); stroke-width: 1.8; }
 
 .map-state-label {
   font-family: var(--font-body);
