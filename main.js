@@ -400,33 +400,22 @@ document.addEventListener('DOMContentLoaded', () => {
   let mapData = {};
 
   async function loadDistribuidores() {
-    const BASE_ID = 'appPww1ELY4fHjRDc';
-    const TABLE_ID = 'tbllfzAtEr6mv5rOH';
-    const PAT = 'patjfm1TGYeVYZrXe.7ec514e9c4e7e35da1735644b178301b269f5d26bb15123d91b47d7ba55b7a4a';
-
     ESTADOS_MEXICO.forEach(e => { mapData[e] = { distribuidores: [] }; });
 
     try {
-      let offset = '';
-      do {
-        const url = 'https://api.airtable.com/v0/' + BASE_ID + '/' + TABLE_ID +
-          '?filterByFormula={Activo}=TRUE()&fields[]=Nombre&fields[]=Municipio&fields[]=WhatsApp&fields[]=Estado' + (offset ? '&offset=' + offset : '');
-        const res = await fetch(url, { headers: { Authorization: 'Bearer ' + PAT } });
-        const data = await res.json();
-        if (data.records) {
-          data.records.forEach(r => {
-            const f = r.fields;
-            if (f.Estado && mapData[f.Estado]) {
-              mapData[f.Estado].distribuidores.push({
-                nombre: f.Nombre || '',
-                municipio: f.Municipio || '',
-                wa: f.WhatsApp || ''
-              });
-            }
-          });
-        }
-        offset = data.offset || '';
-      } while (offset);
+      const res = await fetch('https://n8n.guiahudumaliving.online/webhook/gbforce-distribuidores');
+      const data = await res.json();
+      if (data.records) {
+        data.records.forEach(d => {
+          if (d.estado && mapData[d.estado]) {
+            mapData[d.estado].distribuidores.push({
+              nombre: d.nombre,
+              municipio: d.municipio,
+              wa: d.wa
+            });
+          }
+        });
+      }
     } catch (e) {
       console.error('Error cargando distribuidores:', e);
     }
