@@ -86,6 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── META PIXEL: WhatsApp click ──
+  document.querySelectorAll('.whatsapp-float').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (typeof gbTrackEvent === 'function') {
+        gbTrackEvent('Contact', { content_name: 'whatsapp_float' });
+      }
+    });
+  });
+
   // ── HEADER SCROLL ──
   const header = document.getElementById('header');
   window.addEventListener('scroll', () => {
@@ -289,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.textContent = 'Enviando...';
 
       const referidoNombreInput = document.getElementById('referido_nombre');
+      const leadEventId = typeof gbGenEventId === 'function' ? gbGenEventId() : '';
       const data = {
         nombre:             distForm.nombre.value.trim(),
         apellidos:          distForm.apellidos.value.trim(),
@@ -309,6 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ...trackingData,
         timestamp:          new Date().toISOString(),
         url_origen:         window.location.href,
+        fbp:                window.gbFbData ? window.gbFbData.fbp : '',
+        fbc:                window.gbFbData ? window.gbFbData.fbc : '',
+        event_id:           leadEventId,
       };
 
       const errorEl = document.getElementById('formError');
@@ -320,6 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (typeof gbTrackEvent === 'function') {
+          gbTrackEvent('Lead', {}, leadEventId);
+        }
         distForm.style.display = 'none';
         if (errorEl) errorEl.style.display = 'none';
         const nameSpan = document.getElementById('successName');
@@ -653,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── SCROLL ANIMATIONS ──
   const fadeEls = document.querySelectorAll(
-    '.problem-card, .ingredient-card, .opp-card, .profile-card, .material-card, .pricing-card, .timeline-item, .dash-card, .use-case-card, .differentiator-point, .rebel-point, .how-to-step'
+    '.problem-card, .spec-card, .ingredient-card, .opp-card, .profile-card, .material-card, .pricing-card, .timeline-item, .dash-card, .differentiator-point, .rebel-point'
   );
   fadeEls.forEach(el => el.classList.add('fade-up'));
 
@@ -669,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fadeEls.forEach(el => observer.observe(el));
 
   // Staggered children in grids
-  const grids = document.querySelectorAll('.problems-grid, .ingredients-grid, .opportunity-grid, .profiles-grid, .materials-grid, .pricing-cards, .dashboard-grid, .use-cases-grid, .differentiator-points, .rebel-points-grid');
+  const grids = document.querySelectorAll('.problems-grid, .product-specs-grid, .ingredients-grid, .opportunity-grid, .profiles-grid, .materials-grid, .pricing-cards, .dashboard-grid, .differentiator-points, .rebel-points-grid');
   grids.forEach(grid => {
     const items = grid.querySelectorAll('.fade-up');
     items.forEach((item, i) => { item.style.transitionDelay = `${i * 0.05}s`; });
@@ -688,5 +704,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.3 });
   sections.forEach(s => io.observe(s));
+
+  // ── INGREDIENT MAP + MOBILE NAV ──
+  const ingPanels   = document.querySelectorAll('.ing-panel');
+  const ingHotspots = document.querySelectorAll('.ing-hotspot');
+  const ingMobBtns  = document.querySelectorAll('.ing-mob-btn');
+
+  function activateIngredient(idx) {
+    ingPanels.forEach(p => p.classList.remove('active'));
+    ingHotspots.forEach(h => h.classList.remove('active'));
+    ingMobBtns.forEach(b => b.classList.remove('active'));
+    if (ingPanels[idx]) ingPanels[idx].classList.add('active');
+    const hs = document.querySelector(`.ing-hotspot[data-target="${idx}"]`);
+    if (hs) hs.classList.add('active');
+    const mb = document.querySelector(`.ing-mob-btn[data-target="${idx}"]`);
+    if (mb) { mb.classList.add('active'); mb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+  }
+
+  ingHotspots.forEach(hotspot => {
+    hotspot.addEventListener('click', () => activateIngredient(parseInt(hotspot.dataset.target)));
+  });
+
+  ingMobBtns.forEach(btn => {
+    btn.addEventListener('click', () => activateIngredient(parseInt(btn.dataset.target)));
+  });
 
 });
