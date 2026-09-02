@@ -40,10 +40,23 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=5">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
+
+<!-- PROMO POPUP -->
+<div class="modal promo-modal" id="promoModal">
+  <div class="modal-backdrop" id="promoModalBackdrop"></div>
+  <div class="modal-content promo-modal-content">
+    <button class="modal-close" id="promoModalClose" aria-label="Cerrar">✕</button>
+    <span class="promo-modal-badge">Oferta especial</span>
+    <h3 class="promo-modal-title">TU SEGUNDA SEMANA PUEDE IR POR NUESTRA CUENTA</h3>
+    <p class="promo-modal-sub">Compra tu tratamiento GB FORCE de 7 días y participa para obtener otro tratamiento sin costo.*</p>
+    <a href="#distribuidores" class="btn-gold btn-lg promo-modal-cta" id="promoModalCta">CONOCER LA PROMOCIÓN</a>
+    <p class="promo-modal-legal">*Aplican términos y condiciones. Envío no incluido.</p>
+  </div>
+</div>
 
 <!-- FLOATING WHATSAPP -->
 <a href="https://wa.me/523331721515?text=Hola,%20quiero%20información%20sobre%20GB%20FORCE" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
@@ -731,6 +744,6 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 
 <script src="mexico-geo.js"></script>
 <script src="analytics.js?v=1"></script>
-<script src="main.js?v=3"></script>
+<script src="main.js?v=5"></script>
 </body>
 </html>

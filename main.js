@@ -150,6 +150,33 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modalClose) modalClose.addEventListener('click', closeModal);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
+  // ── PROMO POPUP (aparece una vez por sesión al cargar la página) ──
+  const PROMO_POPUP_ENABLED = false; // cambiar a true para reactivar el popup
+  const promoModal = document.getElementById('promoModal');
+  const promoModalBackdrop = document.getElementById('promoModalBackdrop');
+  const promoModalClose = document.getElementById('promoModalClose');
+  const promoModalCta = document.getElementById('promoModalCta');
+
+  function openPromoModal() {
+    if (!promoModal) return;
+    promoModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePromoModal() {
+    if (!promoModal) return;
+    promoModal.classList.remove('active');
+    document.body.style.overflow = '';
+    sessionStorage.setItem('gbforce_promo_seen', '1');
+  }
+  if (promoModalBackdrop) promoModalBackdrop.addEventListener('click', closePromoModal);
+  if (promoModalClose) promoModalClose.addEventListener('click', closePromoModal);
+  if (promoModalCta) promoModalCta.addEventListener('click', closePromoModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePromoModal(); });
+
+  if (PROMO_POPUP_ENABLED && !sessionStorage.getItem('gbforce_promo_seen')) {
+    setTimeout(openPromoModal, 1500);
+  }
+
   // Product video click-to-expand
   const productVideoEl = document.getElementById('productVideo');
   if (productVideoEl) {
@@ -204,12 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const ventasMes      = semana * 4;
     const ingresoPropio  = ventasMes * PRECIO_FIJO;
     const gananciaPropia = ventasMes * (PRECIO_FIJO - COSTO_FIJO);
-    const margen         = ((PRECIO_FIJO - COSTO_FIJO) / PRECIO_FIJO * 100).toFixed(1);
+    const rendimiento     = ((PRECIO_FIJO - COSTO_FIJO) / COSTO_FIJO * 100).toFixed(1);
 
     results.ventas.textContent   = ventasMes;
     results.ingreso.textContent  = fmt(ingresoPropio);
     results.ganancia.textContent = fmt(gananciaPropia);
-    results.margen.textContent   = margen + '%';
+    results.margen.textContent   = rendimiento + '%';
 
     if (sub > 0) {
       subGroup.style.display  = 'block';
