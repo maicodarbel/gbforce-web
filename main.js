@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="zone-available"><div class="zone-badge">Zona disponible</div><p>Esta zona está disponible para nuevos socios comerciales autorizados. Sé el primero en representar GB FORCE en <strong>${stateName}</strong>.</p><a href="oportunidad.html#formulario" class="btn-gold">Quiero tomar esta zona</a></div>`;
     } else {
       dists.forEach(d => {
-        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div>${d.municipio ? `<div class="dist-city">📍 ${d.municipio}</div>` : ''}<div class="dist-contact"><a href="https://wa.me/${d.wa}?text=Hola,%20encontré%20tu%20contacto%20en%20GB%20FORCE" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
+        html += `<div class="distribuidor-card"><div class="dist-name">${d.nombre}</div>${d.municipio ? `<div class="dist-city">📍 ${d.municipio}</div>` : ''}<div class="dist-contact"><a href="https://wa.me/${d.wa}" target="_blank">💬 Contactar por WhatsApp</a></div></div>`;
       });
       html += `<a href="oportunidad.html#formulario" class="btn-ghost" style="margin-top:1rem;display:inline-flex;">Ser socio comercial en ${stateName}</a>`;
     }
