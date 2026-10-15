@@ -455,9 +455,14 @@ document.addEventListener('DOMContentLoaded', () => {
             mapData[f.Estado].distribuidores.push({
               nombre: f.Nombre || '',
               municipio: f.Municipio || '',
-              wa: f.WhatsApp || ''
+              wa: f.WhatsApp || '',
+              orden: typeof f.Orden === 'number' ? f.Orden : Infinity
             });
           }
+        });
+        // Orden definido en el panel (Orden ascendente; sin número al final, orden estable)
+        ESTADOS_MEXICO.forEach(e => {
+          mapData[e].distribuidores.sort((a, b) => (a.orden === b.orden ? 0 : a.orden < b.orden ? -1 : 1));
         });
       }
     } catch (e) {
