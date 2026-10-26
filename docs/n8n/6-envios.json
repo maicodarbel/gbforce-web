@@ -1,0 +1,1090 @@
+{
+    "name":  "GB FORCE - 6 pagina de envios (Supabase + bitacora)",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-envios-ingreso",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+                                                         "allowedOrigins":  "https://gbforce.mx,http://localhost:8080"
+                                                     },
+                                         "httpMethod":  "POST"
+                                     },
+                      "id":  "cfbae54b-16cc-4af7-9c2c-68c58a59fbd9",
+                      "name":  "Webhook ingreso",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       100
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-envios-lista",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+                                                         "allowedOrigins":  "https://gbforce.mx,http://localhost:8080"
+                                                     },
+                                         "httpMethod":  "POST"
+                                     },
+                      "id":  "bc4c9170-9c33-428a-a7c8-ab9fb02933a5",
+                      "name":  "Webhook lista",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-envios-marcar",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+                                                         "allowedOrigins":  "https://gbforce.mx,http://localhost:8080"
+                                                     },
+                                         "httpMethod":  "POST"
+                                     },
+                      "id":  "cc3af388-d4b9-4a35-802b-b398a7daa217",
+                      "name":  "Webhook marcar",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       500
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CONFIGURACIÓN DE SUPABASE (valores PÚBLICOS: los mismos de envios.js) =====\nconst SUPABASE_URL = \u0027https://lcaqniptbppilsiopvgd.supabase.co\u0027;             // ej. https://abcdefgh.supabase.co\nconst SUPABASE_ANON_KEY = \u0027eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYXFuaXB0YnBwaWxzaW9wdmdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5NTk3MTIsImV4cCI6MjEwODUzNTcxMn0.cBgkWvP6_e0bhSkTjFvZp5eqnoQ4PNEUqlxTtnGqGmo\u0027;   // clave \"anon public\"\n// ================================================================================\nconst inp = $input.first().json;\nconst b = inp.body || {};\nconst wurl = String(inp.webhookUrl || \u0027\u0027);\nconst route = wurl.endsWith(\u0027gbforce-envios-lista\u0027) ? \u0027lista\u0027 : (wurl.endsWith(\u0027gbforce-envios-ingreso\u0027) ? \u0027ingreso\u0027 : \u0027marcar\u0027);\nconst h = inp.headers || {};\nconst ip = String(h[\u0027cf-connecting-ip\u0027] || h[\u0027x-real-ip\u0027] || String(h[\u0027x-forwarded-for\u0027] || \u0027\u0027).split(\u0027,\u0027)[0] || \u0027\u0027).trim();\nconst token = (typeof b.token === \u0027string\u0027 \u0026\u0026 /^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$/.test(b.token)) ? b.token : \u0027\u0027;\nreturn [{ json: { route, token, body: b, ip, supaUrl: SUPABASE_URL.replace(/\\/$/, \u0027\u0027), anon: SUPABASE_ANON_KEY } }];"
+                                     },
+                      "id":  "b6a29fed-324d-44f6-98c6-2839fe428bc5",
+                      "name":  "Preparar token",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       240,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "={{ $json.supaUrl }}/auth/v1/user",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "value":  "={{ \"Bearer \" + $json.token }}",
+                                                                                         "name":  "Authorization"
+                                                                                     },
+                                                                                     {
+                                                                                         "value":  "={{ $json.anon }}",
+                                                                                         "name":  "apikey"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "bc711509-2c27-4d85-a89c-8e9b7b36cc78",
+                      "name":  "Supabase: validar sesión",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       460,
+                                       300
+                                   ],
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CORREOS AUTORIZADOS (opcional pero recomendado: segunda barrera) =====\nconst CORREOS_AUTORIZADOS = \u0027\u0027;   // ej. \u0027ana@gbforce.mx, luis@gbforce.mx\u0027  (vacío = cualquier usuario creado por ti en Supabase)\n// =========================================================================\nconst prep = $(\u0027Preparar token\u0027).item.json;\nconst u = $(\u0027Supabase: validar sesión\u0027).item.json || {};\n\n// Ajustes editables en Airtable (tabla \"Configuración\"). Si no se pueden leer, se usan estos valores\nlet INACT = 8, MAXH = 24;\ntry {\n  const recs = ($input.first().json.records) || [];\n  for (const r of recs) {\n    const f = r.fields || {};\n    const v = parseFloat(String(f[\u0027Valor\u0027]).replace(\u0027,\u0027, \u0027.\u0027));\n    if (!isFinite(v)) continue;\n    if (f[\u0027Clave\u0027] === \u0027envios_inactividad_horas\u0027) INACT = Math.min(72, Math.max(0.25, v));\n    if (f[\u0027Clave\u0027] === \u0027envios_sesion_maxima_horas\u0027) MAXH = Math.min(168, Math.max(1, v));\n  }\n} catch (e) {}\nconst cfg = { inactividadHoras: INACT, maximaHoras: MAXH };\n\nconst fail = (reason) =\u003e [{ json: { ok: false, reason, route: prep.route } }];\nif (!prep.token || !u.id || !u.email) return fail(\u0027token_invalido\u0027);\nlet p;\ntry {\n  const part = prep.token.split(\u0027.\u0027)[1].replace(/-/g, \u0027+\u0027).replace(/_/g, \u0027/\u0027);\n  p = JSON.parse(Buffer.from(part, \u0027base64\u0027).toString(\u0027utf8\u0027));\n} catch (e) { return fail(\u0027token_ilegible\u0027); }\nif (p.sub !== u.id) return fail(\u0027usuario_distinto\u0027);\nif (!p.exp || p.exp * 1000 \u003c Date.now()) return fail(\u0027expirado\u0027);\nif (p.aal !== \u0027aal2\u0027) return fail(\u0027sin_segundo_paso\u0027);           // exige verificación en dos pasos\n\n// Duración máxima de la sesión, contada desde el último código de Google Authenticator\n// (la fecha viaja firmada dentro del token, no se puede falsificar desde el navegador)\nconst amr = Array.isArray(p.amr) ? p.amr : [];\nconst totp = amr.filter(a =\u003e a \u0026\u0026 a.method === \u0027totp\u0027).map(a =\u003e Number(a.timestamp) || 0);\nif (!totp.length) return fail(\u0027sin_registro_segundo_paso\u0027);\nif (Date.now() / 1000 - Math.max.apply(null, totp) \u003e MAXH * 3600) return fail(\u0027sesion_maxima\u0027);\n\nconst email = String(u.email).toLowerCase();\nconst lista = CORREOS_AUTORIZADOS.split(\u0027,\u0027).map(s =\u003e s.trim().toLowerCase()).filter(Boolean);\nif (lista.length \u0026\u0026 !lista.includes(email)) return fail(\u0027no_autorizado\u0027);\nreturn [{ json: { ok: true, email, route: prep.route, body: prep.body, ip: prep.ip, cfg } }];"
+                                     },
+                      "id":  "349d68c5-e15b-4730-981b-82219518b09f",
+                      "name":  "Validar sesión",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       680,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "a47b41b8-c82b-4137-810e-b63982034072",
+                                                                                   "leftValue":  "={{ $json.ok }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "ca567f12-187a-4d80-8f25-d99664954efe",
+                      "name":  "IF sesión válida",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       900,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: \"no_autorizado\" }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  401
+                                                     }
+                                     },
+                      "id":  "e9b72a64-56d2-45ed-8560-5a7ff6ccc976",
+                      "name":  "Responder 401",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1120,
+                                       700
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "ba19921d-e9f7-4c2d-ba8a-0f172bb2bd97",
+                                                                                   "leftValue":  "={{ $json.route === \"lista\" }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "20b0a917-db91-4e66-8fd5-a9796a291cc4",
+                      "name":  "IF ruta lista",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1120,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const s = $(\u0027Validar sesión\u0027).item.json;\nconst vista = s.body \u0026\u0026 s.body.vista === \u0027enviados\u0027 ? \u0027enviados\u0027 : \u0027por-enviar\u0027;\nconst formula = vista === \u0027enviados\u0027\n  ? \u0027AND({Estado}=\"PAGADO\",{Logística}=\"ENVIADO\",IS_AFTER({EnviadoEn},DATEADD(NOW(),-14,\"days\")))\u0027\n  : \u0027AND({Estado}=\"PAGADO\",{Logística}=\"POR ENVIAR\")\u0027;\nreturn [{ json: { formula, dir: vista === \u0027enviados\u0027 ? \u0027desc\u0027 : \u0027asc\u0027, campo: vista === \u0027enviados\u0027 ? \u0027EnviadoEn\u0027 : \u0027PagadoEn\u0027 } }];"
+                                     },
+                      "id":  "b7279e6d-1ada-442d-a95c-508c433509f1",
+                      "name":  "Armar consulta lista",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1340,
+                                       160
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "authentication":  "predefinedCredentialType",
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "value":  "={{ $json.formula }}",
+                                                                                        "name":  "filterByFormula"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "100",
+                                                                                        "name":  "pageSize"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "={{ $json.campo }}",
+                                                                                        "name":  "sort[0][field]"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "={{ $json.dir }}",
+                                                                                        "name":  "sort[0][direction]"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "method":  "GET",
+                                         "options":  {
+
+                                                     },
+                                         "sendQuery":  true,
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF",
+                                         "nodeCredentialType":  "airtableTokenApi"
+                                     },
+                      "id":  "c8fbf49e-da88-40be-b1b7-2df60e6f4e60",
+                      "name":  "Airtable: listar envíos",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1560,
+                                       160
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const recs = ($input.first().json.records) || [];\nconst pedidos = recs.map(r =\u003e { const f = r.fields || {}; return {\n  pedido: f[\u0027Pedido\u0027] || \u0027\u0027, nombre: f[\u0027Nombre\u0027] || \u0027\u0027, telefono: f[\u0027Teléfono\u0027] || \u0027\u0027,\n  calle: f[\u0027Calle\u0027] || \u0027\u0027, colonia: f[\u0027Colonia\u0027] || \u0027\u0027, cp: f[\u0027CP\u0027] || \u0027\u0027, ciudad: f[\u0027Ciudad\u0027] || \u0027\u0027,\n  estado: f[\u0027Estado de envío\u0027] || \u0027\u0027, referencias: f[\u0027Referencias\u0027] || \u0027\u0027, cantidad: Number(f[\u0027Cantidad\u0027]) || 1,\n  pagadoEn: f[\u0027PagadoEn\u0027] || \u0027\u0027, paqueteria: f[\u0027Paquetería\u0027] || \u0027\u0027, guia: f[\u0027Guía\u0027] || \u0027\u0027, enviadoEn: f[\u0027EnviadoEn\u0027] || \u0027\u0027\n}; });\nconst cfg = $(\u0027Validar sesión\u0027).item.json.cfg || {};\n// Solo datos de envío y cantidad: sin montos, sin datos de pago, sin correo.\n// \"config\" le dice a la página cuántas horas de inactividad tolerar (se cambia en Airtable \u003e Configuración)\nreturn [{ json: { pedidos, totalPedidos: pedidos.length, totalCajas: pedidos.reduce((s, p) =\u003e s + p.cantidad, 0), config: { inactividadHoras: cfg.inactividadHoras || 8, maximaHoras: cfg.maximaHoras || 24 } } }];"
+                                     },
+                      "id":  "c9c9996f-eb45-40ef-8641-c9ed0fdce4c1",
+                      "name":  "Armar lista",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1780,
+                                       160
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify($json) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "b7cc975c-8f28-459f-bc56-8bc6dad06b15",
+                      "name":  "Responder lista",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       2000,
+                                       160
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "60d5dc9a-cca3-4b72-97ae-ffb89da91a18",
+                                                                                   "leftValue":  "={{ $json.route === \"ingreso\" }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "1dbf69e2-48c5-45bb-847a-86e25f7e7bae",
+                      "name":  "IF ruta ingreso",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1340,
+                                       460
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const s = $(\u0027Validar sesión\u0027).item.json;\nreturn [{ json: { registro: { typecast: true, records: [ { fields: { \u0027Resumen\u0027: s.email + \u0027 · INGRESO\u0027, \u0027Fecha\u0027: new Date().toISOString(), \u0027Usuario\u0027: s.email, \u0027Acción\u0027: \u0027INGRESO\u0027, \u0027IP\u0027: s.ip, \u0027Detalle\u0027: \u0027Inicio de sesión con verificación en dos pasos\u0027 } } ] } } }];"
+                                     },
+                      "id":  "02adb8b4-1b3f-466a-8f91-81fdddc4ecd0",
+                      "name":  "Armar bitácora ingreso",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1560,
+                                       360
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblTp8SDAOH5XIklI",
+                                         "method":  "POST",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify($json.registro) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "24894f8f-543e-455a-bcc2-712c1b5817d6",
+                      "name":  "Airtable: bitácora (ingreso)",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1780,
+                                       360
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ ok: true, email: $(\"Validar sesión\").item.json.email }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "24c4d2e2-475b-4308-b39b-d1701ff5bc56",
+                      "name":  "Responder ingreso",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       2000,
+                                       360
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const s = $(\u0027Validar sesión\u0027).item.json;\nconst b = s.body || {};\nconst clean = (x, max) =\u003e String(x == null ? \u0027\u0027 : x).replace(/[\\u0000-\\u001f\u003c\u003e]/g, \u0027 \u0027).trim().slice(0, max);\nconst pedido = String(b.pedido || \u0027\u0027);\nif (!/^GB-[A-Z0-9]{6}$/.test(pedido)) return [{ json: { ok: false, error: \u0027pedido_invalido\u0027 } }];\nconst accion = b.accion === \u0027deshacer\u0027 ? \u0027deshacer\u0027 : \u0027enviar\u0027;\nconst paqueteria = clean(b.paqueteria, 40), guia = clean(b.guia, 60);\nif (accion === \u0027enviar\u0027 \u0026\u0026 (!paqueteria || !guia)) return [{ json: { ok: false, error: \u0027faltan_datos\u0027 } }];\nreturn [{ json: { ok: true, formula: \u0027{Pedido}=\"\u0027 + pedido + \u0027\"\u0027, accion, paqueteria, guia } }];"
+                                     },
+                      "id":  "88ca4cc9-c777-434b-8f6f-69ede7b462cc",
+                      "name":  "Validar marcar",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1560,
+                                       600
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "42241b06-1c67-406c-b8a6-d2cbc18bae7d",
+                                                                                   "leftValue":  "={{ $json.ok }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "03284d69-3696-408e-abb9-f834b92e01d3",
+                      "name":  "IF datos marcar",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1780,
+                                       600
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: $json.error }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  400
+                                                     }
+                                     },
+                      "id":  "c93f72d0-defe-41ff-be84-524150f12426",
+                      "name":  "Responder error marcar",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       2000,
+                                       780
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "authentication":  "predefinedCredentialType",
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "value":  "={{ $json.formula }}",
+                                                                                        "name":  "filterByFormula"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "1",
+                                                                                        "name":  "maxRecords"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "method":  "GET",
+                                         "options":  {
+
+                                                     },
+                                         "sendQuery":  true,
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF",
+                                         "nodeCredentialType":  "airtableTokenApi"
+                                     },
+                      "id":  "16c4390d-1892-4f8e-b1a8-1e7f9986b58a",
+                      "name":  "Airtable: buscar pedido",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       2000,
+                                       560
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const v = $(\u0027Validar marcar\u0027).item.json;\nconst recs = ($input.first().json.records) || [];\nif (!recs.length || (recs[0].fields || {})[\u0027Estado\u0027] !== \u0027PAGADO\u0027) return [{ json: { ok: false, error: \u0027pedido_no_pagado_o_inexistente\u0027 } }];\nconst f = recs[0].fields;\nconst fields = v.accion === \u0027enviar\u0027\n  ? { \u0027Logística\u0027: \u0027ENVIADO\u0027, \u0027Paquetería\u0027: v.paqueteria, \u0027Guía\u0027: v.guia, \u0027EnviadoEn\u0027: new Date().toISOString() }\n  : { \u0027Logística\u0027: \u0027POR ENVIAR\u0027, \u0027Paquetería\u0027: \u0027\u0027, \u0027Guía\u0027: \u0027\u0027, \u0027EnviadoEn\u0027: null };\nreturn [{ json: { ok: true, recordId: recs[0].id, fields, accion: v.accion, pedido: f[\u0027Pedido\u0027], correo: f[\u0027Correo\u0027] || \u0027\u0027, nombre: f[\u0027Nombre\u0027] || \u0027\u0027, paqueteria: v.paqueteria, guia: v.guia } }];"
+                                     },
+                      "id":  "a8c8d834-541b-4ff7-898b-46cdc647a266",
+                      "name":  "Preparar cambio",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2220,
+                                       560
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "79c71cdd-eff5-46c9-b7b9-a144173ecab5",
+                                                                                   "leftValue":  "={{ $json.ok }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "bdcb37cc-3000-4d85-9d17-3c583c089ccb",
+                      "name":  "IF pedido válido",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2440,
+                                       560
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: $json.error }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  404
+                                                     }
+                                     },
+                      "id":  "4fa3e712-e2ae-4408-9d7d-3fd75cef773f",
+                      "name":  "Responder no encontrado",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       2660,
+                                       780
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "=https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF/{{ $json.recordId }}",
+                                         "method":  "PATCH",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify({ typecast: true, fields: $json.fields }) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "1b3db0aa-df45-4a2b-b7a3-c61497eeee52",
+                      "name":  "Airtable: actualizar envío",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       2660,
+                                       520
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const s = $(\u0027Validar sesión\u0027).item.json;\nconst p = $(\u0027Preparar cambio\u0027).item.json;\nconst enviar = p.accion === \u0027enviar\u0027;\nconst accion = enviar ? \u0027MARCAR ENVIADO\u0027 : \u0027DESHACER ENVÍO\u0027;\nconst detalle = enviar ? (\u0027Paquetería: \u0027 + p.paqueteria + \u0027 · Guía: \u0027 + p.guia) : \u0027Regresado a Por enviar\u0027;\nreturn [{ json: { registro: { typecast: true, records: [ { fields: { \u0027Resumen\u0027: s.email + \u0027 · \u0027 + accion + \u0027 · \u0027 + p.pedido, \u0027Fecha\u0027: new Date().toISOString(), \u0027Usuario\u0027: s.email, \u0027Acción\u0027: accion, \u0027Pedido\u0027: p.pedido, \u0027IP\u0027: s.ip, \u0027Detalle\u0027: detalle } } ] } } }];"
+                                     },
+                      "id":  "671f9ade-70f9-4303-89d6-af948978e02f",
+                      "name":  "Armar bitácora marcar",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2880,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblTp8SDAOH5XIklI",
+                                         "method":  "POST",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify($json.registro) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "934244e1-34bf-4feb-a4a3-ce66371edfea",
+                      "name":  "Airtable: bitácora (marcar)",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       3100,
+                                       520
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const FROM_EMAIL = \u0027admin@gbforce.mx\u0027;   // el mismo remitente de los otros correos\nconst p = $(\u0027Preparar cambio\u0027).item.json;\nconst esc = (s) =\u003e String(s == null ? \u0027\u0027 : s).replace(/[\u0026\u003c\u003e\"]/g, c =\u003e ({ \u0027\u0026\u0027: \u0027\u0026amp;\u0027, \u0027\u003c\u0027: \u0027\u0026lt;\u0027, \u0027\u003e\u0027: \u0027\u0026gt;\u0027, \u0027\"\u0027: \u0027\u0026quot;\u0027 }[c]));\nconst html = \u0027\u003cdiv style=\"font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#222\"\u003e\u0027\n  + \u0027\u003ch2 style=\"margin:0 0 8px\"\u003e¡Tu pedido va en camino!\u003c/h2\u003e\u0027\n  + \u0027\u003cp\u003eHola \u0027 + esc(String(p.nombre).split(\u0027 \u0027)[0]) + \u0027, ya enviamos tu pedido \u003cb\u003e\u0027 + esc(p.pedido) + \u0027\u003c/b\u003e.\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003ePaquetería:\u003c/b\u003e \u0027 + esc(p.paqueteria) + \u0027\u003cbr\u003e\u003cb\u003eNúmero de guía:\u003c/b\u003e \u0027 + esc(p.guia) + \u0027\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003eCon ese número puedes seguir tu envío en el sitio de la paquetería.\u003c/p\u003e\u0027\n  + \u0027\u003cp style=\"color:#777;font-size:13px\"\u003e¿Dudas? Llámanos al +52 33 3172 1515 o escribe a contacto@gbforce.mx.\u003c/p\u003e\u003c/div\u003e\u0027;\nreturn [{ json: { skip: p.accion !== \u0027enviar\u0027 || !p.correo, fromEmail: FROM_EMAIL, to: p.correo, subject: \u0027Tu pedido \u0027 + p.pedido + \u0027 va en camino\u0027, html } }];"
+                                     },
+                      "id":  "f33ecdd1-cfdb-4195-9474-de1adfd9fe6d",
+                      "name":  "Armar correo de envío",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       3320,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "519802fc-d8ef-48e0-b0db-bda1a287c83d",
+                                                                                   "leftValue":  "={{ $json.skip === false }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "19db3663-853c-4a99-98a2-c32510896e8a",
+                      "name":  "IF mandar correo",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       3540,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "html":  "={{ $(\"Armar correo de envío\").item.json.html }}",
+                                         "fromEmail":  "={{ $(\"Armar correo de envío\").item.json.fromEmail }}",
+                                         "subject":  "={{ $(\"Armar correo de envío\").item.json.subject }}",
+                                         "emailFormat":  "html",
+                                         "options":  {
+
+                                                     },
+                                         "toEmail":  "={{ $(\"Armar correo de envío\").item.json.to }}"
+                                     },
+                      "id":  "e3c3fb65-9763-4d41-b6e1-1d34eb62d989",
+                      "name":  "Correo de seguimiento",
+                      "type":  "n8n-nodes-base.emailSend",
+                      "typeVersion":  2.1,
+                      "position":  [
+                                       3760,
+                                       440
+                                   ],
+                      "credentials":  {
+                                          "smtp":  {
+                                                       "id":  "",
+                                                       "name":  "SMTP GB FORCE"
+                                                   }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ ok: true }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "7d0c75f7-5ace-4256-a44a-2c7797884b18",
+                      "name":  "Responder OK marcar",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       3980,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblTpzLxKT9AoQkBv",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "sendQuery":  true,
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "value":  "20",
+                                                                                        "name":  "pageSize"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "cf48881a-9859-42bc-98e0-3c3f0f87ff0c",
+                      "name":  "Airtable: leer configuración",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       570,
+                                       420
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  }
+              ],
+    "connections":  {
+                        "Webhook ingreso":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Preparar token",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Webhook lista":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Preparar token",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Webhook marcar":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Preparar token",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Preparar token":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Supabase: validar sesión",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Supabase: validar sesión":  {
+                                                         "main":  [
+                                                                      [
+                                                                          {
+                                                                              "node":  "Airtable: leer configuración",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "Validar sesión":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "IF sesión válida",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "IF sesión válida":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "IF ruta lista",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ],
+                                                              [
+                                                                  {
+                                                                      "node":  "Responder 401",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "IF ruta lista":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Armar consulta lista",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ],
+                                                           [
+                                                               {
+                                                                   "node":  "IF ruta ingreso",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Armar consulta lista":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Airtable: listar envíos",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Airtable: listar envíos":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "Armar lista",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "Armar lista":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Responder lista",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "IF ruta ingreso":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Armar bitácora ingreso",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ],
+                                                             [
+                                                                 {
+                                                                     "node":  "Validar marcar",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Armar bitácora ingreso":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "Airtable: bitácora (ingreso)",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "Airtable: bitácora (ingreso)":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "Responder ingreso",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "Validar marcar":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "IF datos marcar",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "IF datos marcar":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Airtable: buscar pedido",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ],
+                                                             [
+                                                                 {
+                                                                     "node":  "Responder error marcar",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Airtable: buscar pedido":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "Preparar cambio",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "Preparar cambio":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "IF pedido válido",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "IF pedido válido":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Airtable: actualizar envío",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ],
+                                                              [
+                                                                  {
+                                                                      "node":  "Responder no encontrado",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Airtable: actualizar envío":  {
+                                                           "main":  [
+                                                                        [
+                                                                            {
+                                                                                "node":  "Armar bitácora marcar",
+                                                                                "type":  "main",
+                                                                                "index":  0
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                       },
+                        "Armar bitácora marcar":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "Airtable: bitácora (marcar)",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "Airtable: bitácora (marcar)":  {
+                                                            "main":  [
+                                                                         [
+                                                                             {
+                                                                                 "node":  "Armar correo de envío",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ]
+                                                                     ]
+                                                        },
+                        "Armar correo de envío":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "IF mandar correo",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "IF mandar correo":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Correo de seguimiento",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ],
+                                                              [
+                                                                  {
+                                                                      "node":  "Responder OK marcar",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Correo de seguimiento":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "Responder OK marcar",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  },
+                        "Airtable: leer configuración":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "Validar sesión",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

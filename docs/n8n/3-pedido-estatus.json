@@ -1,0 +1,204 @@
+{
+    "name":  "GB FORCE - 3 estatus del pedido",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-pedido-estatus",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+                                                         "allowedOrigins":  "https://gbforce.mx,http://localhost:8080"
+                                                     },
+                                         "httpMethod":  "GET"
+                                     },
+                      "id":  "06f495f7-488a-4858-9087-2efd95567d5d",
+                      "name":  "Webhook estatus",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const WEBHOOK_SECRET = \u0027PON_AQUI_TU_SECRETO\u0027;   // el MISMO secreto en todos los flujos\nconst N8N_BASE = \u0027https://n8n.guiahudumaliving.online\u0027;\nconst o = String(($input.first().json.query || {}).o || \u0027\u0027);\nif (!/^GB-[A-Z0-9]{6}$/.test(o)) return [{ json: { valid: false } }];\nreturn [{ json: { valid: true, url: N8N_BASE + \u0027/webhook/gbforce-confirmar-pago?t=\u0027 + encodeURIComponent(WEBHOOK_SECRET) + \u0027\u0026o=\u0027 + encodeURIComponent(o) } }];"
+                                     },
+                      "id":  "c66bd4ff-229a-4b46-a4ea-ffc9256ff797",
+                      "name":  "Validar id",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       220,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "356468fc-e619-462d-bdf8-9797b50d6465",
+                                                                                   "leftValue":  "={{ $json.valid }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "3dd144f8-5fbf-4c95-806a-049bc18a2940",
+                      "name":  "IF id válido",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       440,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "={{ $json.url }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "6af955a8-3af7-49cb-b52e-a9f8b546037b",
+                      "name":  "Llamar a confirmar",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       660,
+                                       200
+                                   ],
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const r = $input.first().json || {};\nconst ok = [\u0027PAGADO\u0027, \u0027PENDIENTE\u0027, \u0027FALLIDO\u0027];\nconst status = ok.includes(r.status) ? r.status : \u0027PENDIENTE\u0027;\nreturn [{ json: { status, amount: Number(r.amount) || 0 } }];   // nunca se devuelven datos personales"
+                                     },
+                      "id":  "20a3d952-b6d0-4827-b26d-dc448fabaaae",
+                      "name":  "Armar respuesta",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       880,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify($json) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "5367fa1e-13f9-49c7-a1b7-b697d5c504c0",
+                      "name":  "Responder",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1100,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ status: \"PENDIENTE\", amount: 0 }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "4aab5fb7-2bad-4d6b-9844-2dee1c5f4f98",
+                      "name":  "Responder pendiente",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       660,
+                                       420
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Webhook estatus":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Validar id",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Validar id":  {
+                                           "main":  [
+                                                        [
+                                                            {
+                                                                "node":  "IF id válido",
+                                                                "type":  "main",
+                                                                "index":  0
+                                                            }
+                                                        ]
+                                                    ]
+                                       },
+                        "IF id válido":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Llamar a confirmar",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ],
+                                                          [
+                                                              {
+                                                                  "node":  "Responder pendiente",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "Llamar a confirmar":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Armar respuesta",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Armar respuesta":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Responder",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

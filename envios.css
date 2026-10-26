@@ -1,0 +1,105 @@
+/* ============================================
+   GB FORCE — Página de envíos (uso interno)
+   Tema claro, letra grande y alto contraste: se usa en el almacén, a veces con el celular.
+   ============================================ */
+:root {
+  --gold: #B8922F; --gold-dark: #8A6A1C; --ink: #14110a; --ink-2: #4a4538; --line: #e4dfd1; --bg: #f6f4ee; --card: #ffffff;
+  --ok: #1d7a46; --warn: #b3261e;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'DM Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+button, input, select { font: inherit; }
+
+.ev-top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; padding: 0.7rem 1rem; background: #14110a; color: #fff; }
+.ev-brand { display: flex; align-items: baseline; gap: 0.35rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.04em; }
+.ev-gb { color: #fff; } .ev-force { color: #E8C96A; }
+.ev-sub { margin-left: 0.5rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc7ad; }
+.ev-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+.ev-btn { min-height: 48px; padding: 0.6rem 1.1rem; border-radius: 12px; border: 2px solid transparent; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.ev-btn:focus-visible, .ev-input:focus-visible, .ev-tab:focus-visible, .ev-select:focus-visible { outline: 3px solid #E8C96A; outline-offset: 2px; }
+.ev-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.ev-btn-main { background: var(--gold); color: #fff; width: 100%; }
+.ev-btn-main:hover:not(:disabled) { background: var(--gold-dark); }
+.ev-btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,0.35); min-height: 44px; padding: 0.4rem 0.9rem; font-weight: 600; }
+.ev-btn-ghost:hover { border-color: #E8C96A; color: #E8C96A; }
+.ev-btn-line { background: #fff; color: var(--ink); border-color: var(--line); }
+.ev-btn-line:hover { border-color: var(--gold); }
+.ev-btn-ok { background: var(--ok); color: #fff; }
+.ev-btn-ok:hover:not(:disabled) { background: #155d35; }
+
+.ev-main { max-width: 860px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+/* acceso */
+.ev-gate { max-width: 440px; margin: 2rem auto; padding: 1.75rem 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 6px 24px rgba(20,17,10,0.06); }
+.ev-gate h1 { margin: 0 0 0.3rem; font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.03em; }
+.ev-gate p { margin: 0 0 1rem; color: var(--ink-2); }
+.ev-label { display: block; margin-bottom: 0.35rem; font-weight: 700; }
+.ev-input, .ev-select { width: 100%; min-height: 52px; padding: 0.7rem 0.9rem; border: 2px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+.ev-check { display: flex; align-items: center; gap: 0.6rem; margin: 0.9rem 0; color: var(--ink-2); cursor: pointer; }
+.ev-check input { width: 22px; height: 22px; accent-color: var(--gold); }
+.ev-error { margin: 0 0 0.9rem; padding: 0.7rem 0.9rem; border-radius: 10px; background: #fdecea; color: var(--warn); font-weight: 600; }
+
+/* resumen y pestañas */
+.ev-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.ev-summary > div { display: flex; flex-direction: column; align-items: center; padding: 0.9rem; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.ev-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.2rem; line-height: 1; }
+.ev-num-gold { color: var(--gold-dark); }
+.ev-lbl { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-2); font-weight: 700; }
+.ev-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.ev-tab { flex: 1; min-height: 52px; border-radius: 12px; border: 2px solid var(--line); background: #fff; color: var(--ink-2); font-weight: 700; cursor: pointer; }
+.ev-tab-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.ev-msg { min-height: 1.4em; margin: 0 0 0.75rem; color: var(--ink-2); }
+.ev-print-head { display: none; }
+
+/* tarjetas de pedido */
+.ev-list { display: grid; gap: 1rem; }
+.ev-card { background: var(--card); border: 1px solid var(--line); border-left: 8px solid var(--gold); border-radius: 16px; padding: 1.1rem 1.1rem 1rem; box-shadow: 0 3px 14px rgba(20,17,10,0.05); break-inside: avoid; }
+.ev-card-sent { border-left-color: var(--ok); }
+.ev-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.ev-id { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; font-size: 1rem; }
+.ev-date { color: var(--ink-2); font-size: 0.88rem; }
+.ev-boxes { flex-shrink: 0; text-align: center; padding: 0.4rem 0.9rem; border-radius: 12px; background: var(--ink); color: #fff; line-height: 1.05; }
+.ev-boxes b { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 0.02em; color: #E8C96A; }
+.ev-boxes span { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.ev-name { margin: 0.7rem 0 0.1rem; font-size: 1.35rem; font-weight: 700; }
+.ev-tel { display: inline-block; margin-bottom: 0.5rem; color: var(--ink); font-weight: 600; }
+.ev-addr { margin: 0.2rem 0 0; padding: 0.7rem 0.8rem; background: var(--bg); border-radius: 10px; font-size: 1.05rem; }
+.ev-addr div + div { margin-top: 0.1rem; }
+.ev-ref { margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--ink-2); }
+.ev-track { margin: 0.7rem 0 0; padding: 0.6rem 0.8rem; background: #e9f6ee; border-radius: 10px; color: #14502d; font-weight: 600; }
+.ev-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
+.ev-btns .ev-btn { flex: 1 1 160px; }
+.ev-form { margin-top: 0.9rem; padding: 0.9rem; border: 2px dashed var(--gold); border-radius: 12px; display: grid; gap: 0.7rem; background: #fffdf6; }
+.ev-form .ev-btns { margin-top: 0.2rem; }
+
+@media (min-width: 700px) {
+  .ev-main { padding-top: 1.75rem; }
+  .ev-card { padding: 1.3rem 1.4rem 1.2rem; }
+}
+
+/* impresión: hoja de empaque limpia */
+@media print {
+  body { background: #fff; font-size: 12pt; }
+  .ev-top, .ev-tabs, .ev-summary, .ev-btns, .ev-form, .ev-gate { display: none !important; }
+  .ev-print-head { display: block; margin: 0 0 0.6rem; font-weight: 700; font-size: 14pt; }
+  .ev-card { box-shadow: none; border: 1px solid #999; border-left: 6px solid #000; page-break-inside: avoid; margin-bottom: 0.4rem; }
+  .ev-boxes { background: #fff; color: #000; border: 2px solid #000; }
+  .ev-boxes b { color: #000; }
+  .ev-addr { background: #fff; border: 1px solid #bbb; }
+}
+
+/* ── Inicio de sesión, dos pasos y vistas de acceso ── */
+.ev-user { align-self: center; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.85rem; color: #cfc7ad; }
+.ev-link { display: block; margin: 1rem auto 0; padding: 0.5rem; background: none; border: 0; color: var(--gold-dark); font-weight: 600; text-decoration: underline; cursor: pointer; }
+.ev-ok { margin: 0 0 0.9rem; padding: 0.7rem 0.9rem; border-radius: 10px; background: #e9f6ee; color: #14502d; font-weight: 600; }
+.ev-code { font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.ev-steps { margin: 0 0 1rem; padding-left: 1.2rem; color: var(--ink-2); }
+.ev-steps li { margin-bottom: 0.35rem; }
+.ev-qr { display: flex; justify-content: center; margin: 0.5rem 0 1rem; }
+.ev-qr img { width: 200px; height: 200px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ev-details { margin: 0 0 1rem; color: var(--ink-2); }
+.ev-details summary { cursor: pointer; font-weight: 600; }
+.ev-secret { display: block; margin-top: 0.5rem; padding: 0.6rem 0.8rem; background: var(--bg); border-radius: 8px; word-break: break-all; font-size: 0.95rem; }
+.ev-gate form + .ev-link, .ev-gate .ev-link { font-size: 0.95rem; }

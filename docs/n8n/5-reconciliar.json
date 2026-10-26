@@ -1,0 +1,136 @@
+{
+    "name":  "GB FORCE - 5 reconciliar pedidos pendientes",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "rule":  {
+                                                      "interval":  [
+                                                                       {
+                                                                           "field":  "minutes",
+                                                                           "minutesInterval":  30
+                                                                       }
+                                                                   ]
+                                                  }
+                                     },
+                      "id":  "389eab7c-1117-4fba-8973-65e4754dc33c",
+                      "name":  "Cada 30 minutos",
+                      "type":  "n8n-nodes-base.scheduleTrigger",
+                      "typeVersion":  1.2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "authentication":  "predefinedCredentialType",
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "value":  "AND({Estado}=\"PENDIENTE\",{PaymentRequestId}!=\"\",IS_AFTER({CreadoEn},DATEADD(NOW(),-3,\"days\")))",
+                                                                                        "name":  "filterByFormula"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "50",
+                                                                                        "name":  "pageSize"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "Pedido",
+                                                                                        "name":  "fields[]"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "method":  "GET",
+                                         "options":  {
+
+                                                     },
+                                         "sendQuery":  true,
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF",
+                                         "nodeCredentialType":  "airtableTokenApi"
+                                     },
+                      "id":  "d87fd70f-7431-43c1-8a42-064c66e3408d",
+                      "name":  "Airtable: pedidos pendientes",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       240,
+                                       300
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const WEBHOOK_SECRET = \u0027PON_AQUI_TU_SECRETO\u0027;   // el MISMO secreto en todos los flujos\nconst N8N_BASE = \u0027https://n8n.guiahudumaliving.online\u0027;\nconst recs = ($input.first().json.records) || [];\nreturn recs.map(r =\u003e ({ json: { url: N8N_BASE + \u0027/webhook/gbforce-confirmar-pago?t=\u0027 + encodeURIComponent(WEBHOOK_SECRET) + \u0027\u0026o=\u0027 + encodeURIComponent((r.fields || {})[\u0027Pedido\u0027] || \u0027\u0027) } }));"
+                                     },
+                      "id":  "0ef8cb61-7b90-47ab-8327-85228977fcd5",
+                      "name":  "Armar llamadas",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       480,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "={{ $json.url }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "c0537663-295d-486d-b346-224bec67364d",
+                      "name":  "Llamar a confirmar",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       720,
+                                       300
+                                   ],
+                      "onError":  "continueRegularOutput"
+                  }
+              ],
+    "connections":  {
+                        "Cada 30 minutos":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Airtable: pedidos pendientes",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Airtable: pedidos pendientes":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "Armar llamadas",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "Armar llamadas":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Llamar a confirmar",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

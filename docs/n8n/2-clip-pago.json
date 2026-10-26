@@ -1,0 +1,81 @@
+{
+    "name":  "GB FORCE - 2 aviso de pago de Clip",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "path":  "clip-pago",
+                                         "responseMode":  "onReceived",
+                                         "options":  {
+
+                                                     },
+                                         "httpMethod":  "POST"
+                                     },
+                      "id":  "44b95853-b883-40c9-be65-ea438422dc97",
+                      "name":  "Webhook de Clip",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const WEBHOOK_SECRET = \u0027PON_AQUI_TU_SECRETO\u0027;   // el MISMO secreto en todos los flujos\nconst N8N_BASE = \u0027https://n8n.guiahudumaliving.online\u0027;\nconst q = $input.first().json.query || {};\nconst b = $input.first().json.body || {};\nif (q.t !== WEBHOOK_SECRET) return [];                 // aviso sin secreto: se ignora\nconst id = String(b.payment_request_id || \u0027\u0027);\nif (!/^[0-9a-fA-F-]{36}$/.test(id)) return [];\n// No importa qué estado diga el aviso: el flujo 4 consulta a Clip el estado real\nreturn [{ json: { url: N8N_BASE + \u0027/webhook/gbforce-confirmar-pago?t=\u0027 + encodeURIComponent(WEBHOOK_SECRET) + \u0027\u0026pr=\u0027 + encodeURIComponent(id) } }];"
+                                     },
+                      "id":  "4c15f147-a3c7-4acb-8aa9-289f2ebfaa13",
+                      "name":  "Filtrar aviso",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       240,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "={{ $json.url }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "bc3aadb5-3343-48a5-9116-137a1ca0d6be",
+                      "name":  "Llamar a confirmar",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       480,
+                                       300
+                                   ],
+                      "onError":  "continueRegularOutput"
+                  }
+              ],
+    "connections":  {
+                        "Webhook de Clip":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Filtrar aviso",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Filtrar aviso":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Llamar a confirmar",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

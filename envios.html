@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Envíos — GB FORCE</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="envios.css?v=2">
+<!-- Página interna: sin Meta Pixel ni analítica a propósito (contiene datos de clientes) -->
+</head>
+<body data-page="envios">
+
+<header class="ev-top">
+  <div class="ev-brand"><span class="ev-gb">GB</span><span class="ev-force">FORCE</span><span class="ev-sub">Envíos</span></div>
+  <div class="ev-actions" id="topActions" hidden>
+    <span class="ev-user" id="userEmail"></span>
+    <button type="button" class="ev-btn ev-btn-ghost" id="btnRefresh">Actualizar</button>
+    <button type="button" class="ev-btn ev-btn-ghost" id="btnPrint">Imprimir</button>
+    <button type="button" class="ev-btn ev-btn-ghost" id="btnLogout">Cerrar sesión</button>
+  </div>
+</header>
+
+<main class="ev-main">
+
+  <p class="ev-msg" id="bootMsg" role="status">Cargando…</p>
+
+  <!-- 1. Iniciar sesión -->
+  <section class="ev-gate" id="viewLogin" hidden>
+    <h1>Iniciar sesión</h1>
+    <p>Acceso solo para personal autorizado.</p>
+    <form id="loginForm" autocomplete="on">
+      <label class="ev-label" for="loginEmail">Correo</label>
+      <input type="email" id="loginEmail" class="ev-input" autocomplete="username" required>
+      <label class="ev-label" for="loginPass">Contraseña</label>
+      <input type="password" id="loginPass" class="ev-input" autocomplete="current-password" required>
+      <p class="ev-error" id="loginError" role="alert" hidden></p>
+      <p class="ev-ok" id="loginOk" role="status" hidden></p>
+      <button type="submit" class="ev-btn ev-btn-main" id="loginBtn">Entrar</button>
+    </form>
+    <button type="button" class="ev-link" id="linkForgot">Olvidé mi contraseña</button>
+  </section>
+
+  <!-- 2. Olvidé mi contraseña -->
+  <section class="ev-gate" id="viewForgot" hidden>
+    <h1>Restablecer contraseña</h1>
+    <p>Escribe tu correo y te enviaremos un enlace para crear una contraseña nueva.</p>
+    <form id="forgotForm">
+      <label class="ev-label" for="forgotEmail">Correo</label>
+      <input type="email" id="forgotEmail" class="ev-input" autocomplete="username" required>
+      <p class="ev-error" id="forgotError" role="alert" hidden></p>
+      <p class="ev-ok" id="forgotOk" role="status" hidden></p>
+      <button type="submit" class="ev-btn ev-btn-main" id="forgotBtn">Enviar enlace</button>
+    </form>
+    <button type="button" class="ev-link" id="linkBackLogin1">Volver a iniciar sesión</button>
+  </section>
+
+  <!-- 3. Contraseña nueva (llegó desde el enlace del correo) -->
+  <section class="ev-gate" id="viewNewPass" hidden>
+    <h1>Crea tu contraseña nueva</h1>
+    <p>Usa al menos 12 caracteres, con letras y números.</p>
+    <form id="newPassForm">
+      <label class="ev-label" for="newPass1">Contraseña nueva</label>
+      <input type="password" id="newPass1" class="ev-input" autocomplete="new-password" minlength="12" required>
+      <label class="ev-label" for="newPass2">Repite la contraseña</label>
+      <input type="password" id="newPass2" class="ev-input" autocomplete="new-password" minlength="12" required>
+      <div id="newPassMfa" hidden>
+        <label class="ev-label" for="newPassCode">Código de Google Authenticator</label>
+        <input type="text" id="newPassCode" class="ev-input ev-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}">
+      </div>
+      <p class="ev-error" id="newPassError" role="alert" hidden></p>
+      <button type="submit" class="ev-btn ev-btn-main" id="newPassBtn">Guardar contraseña</button>
+    </form>
+  </section>
+
+  <!-- 4. Activar autenticación de dos pasos (primera vez) -->
+  <section class="ev-gate" id="viewEnroll" hidden>
+    <h1>Activa la verificación en dos pasos</h1>
+    <p>Es obligatoria. Solo se hace una vez.</p>
+    <ol class="ev-steps">
+      <li>Instala <b>Google Authenticator</b> en tu celular.</li>
+      <li>Ábrela, toca <b>+</b> y elige <b>Escanear código QR</b>.</li>
+      <li>Escanea este código y escribe abajo los 6 números que aparezcan.</li>
+    </ol>
+    <div class="ev-qr"><img id="qrImg" alt="Código QR para Google Authenticator" width="200" height="200"></div>
+    <details class="ev-details"><summary>No puedo escanear el código</summary>
+      <p>Escribe esta clave a mano en la app (tipo «basada en tiempo»):</p>
+      <code id="qrSecret" class="ev-secret"></code>
+    </details>
+    <form id="enrollForm">
+      <label class="ev-label" for="enrollCode">Código de 6 números</label>
+      <input type="text" id="enrollCode" class="ev-input ev-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+      <p class="ev-error" id="enrollError" role="alert" hidden></p>
+      <button type="submit" class="ev-btn ev-btn-main" id="enrollBtn">Activar y entrar</button>
+    </form>
+    <button type="button" class="ev-link" id="linkLogout1">Cancelar y salir</button>
+  </section>
+
+  <!-- 5. Código de verificación (cada inicio de sesión) -->
+  <section class="ev-gate" id="viewMfa" hidden>
+    <h1>Verificación en dos pasos</h1>
+    <p>Abre Google Authenticator y escribe el código de 6 números de «GB FORCE».</p>
+    <form id="mfaForm">
+      <label class="ev-label" for="mfaCode">Código de 6 números</label>
+      <input type="text" id="mfaCode" class="ev-input ev-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+      <p class="ev-error" id="mfaError" role="alert" hidden></p>
+      <button type="submit" class="ev-btn ev-btn-main" id="mfaBtn">Verificar</button>
+    </form>
+    <button type="button" class="ev-link" id="linkLogout2">Cancelar y salir</button>
+  </section>
+
+  <!-- 6. Panel de envíos -->
+  <section id="viewApp" hidden>
+    <div class="ev-summary" aria-live="polite">
+      <div><span class="ev-num" id="sumPedidos">0</span><span class="ev-lbl">pedidos</span></div>
+      <div><span class="ev-num ev-num-gold" id="sumCajas">0</span><span class="ev-lbl">cajas</span></div>
+    </div>
+
+    <div class="ev-tabs" role="tablist">
+      <button type="button" role="tab" class="ev-tab ev-tab-on" id="tabPor" aria-selected="true">Por enviar</button>
+      <button type="button" role="tab" class="ev-tab" id="tabEnv" aria-selected="false">Enviados (14 días)</button>
+    </div>
+
+    <p class="ev-print-head" id="printHead"></p>
+    <p class="ev-msg" id="listMsg" role="status"></p>
+    <div class="ev-list" id="list"></div>
+  </section>
+
+</main>
+
+<script src="vendor/supabase-js-2.118.0.js"></script>
+<script src="envios.js?v=3"></script>
+</body>
+</html>

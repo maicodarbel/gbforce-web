@@ -1,0 +1,756 @@
+{
+    "name":  "GB FORCE - 4 confirmar pago (Clip + Meta + correos)",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-confirmar-pago",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+
+                                                     },
+                                         "httpMethod":  "GET"
+                                     },
+                      "id":  "f10fe689-d3c1-4e7e-91a5-84ce8ed9abd0",
+                      "name":  "Webhook confirmar",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CONFIGURACIÓN =====\nconst WEBHOOK_SECRET = \u0027PON_AQUI_TU_SECRETO\u0027;   // el MISMO secreto en todos los flujos\n// =========================\nconst q = $input.first().json.query || {};\nif (q.t !== WEBHOOK_SECRET) return [{ json: { ok: false } }];\nconst o = String(q.o || \u0027\u0027), pr = String(q.pr || \u0027\u0027);\nif (/^GB-[A-Z0-9]{6}$/.test(o)) return [{ json: { ok: true, formula: \u0027{Pedido}=\"\u0027 + o + \u0027\"\u0027 } }];\nif (/^[0-9a-fA-F-]{36}$/.test(pr)) return [{ json: { ok: true, formula: \u0027{PaymentRequestId}=\"\u0027 + pr + \u0027\"\u0027 } }];\nreturn [{ json: { ok: false } }];"
+                                     },
+                      "id":  "54d43330-e707-490b-b854-258a1fa3b750",
+                      "name":  "Validar",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       220,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "26bbeb52-59db-4541-99c2-f9a6d9a6e0b5",
+                                                                                   "leftValue":  "={{ $json.ok }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "4782771f-c445-4b10-a856-1b2ebe5d487d",
+                      "name":  "IF autorizado",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       440,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: \"no_autorizado\" }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  401
+                                                     }
+                                     },
+                      "id":  "703f9867-fba4-4275-82bb-74633aad7f0d",
+                      "name":  "Responder 401",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       660,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "authentication":  "predefinedCredentialType",
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "value":  "={{ $json.formula }}",
+                                                                                        "name":  "filterByFormula"
+                                                                                    },
+                                                                                    {
+                                                                                        "value":  "1",
+                                                                                        "name":  "maxRecords"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "method":  "GET",
+                                         "options":  {
+
+                                                     },
+                                         "sendQuery":  true,
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF",
+                                         "nodeCredentialType":  "airtableTokenApi"
+                                     },
+                      "id":  "a46f7094-fb9e-4f5c-a390-6b877389aa1a",
+                      "name":  "Airtable: buscar",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       660,
+                                       200
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const recs = ($input.first().json.records) || [];\nif (!recs.length) return [{ json: { done: true, status: \u0027PENDIENTE\u0027, amount: 0 } }];   // pedido desconocido\nconst r = recs[0], f = r.fields || {};\nif (f[\u0027Estado\u0027] === \u0027PAGADO\u0027) return [{ json: { done: true, status: \u0027PAGADO\u0027, amount: Number(f[\u0027Monto\u0027]) || 0 } }];\nif (!f[\u0027PaymentRequestId\u0027]) return [{ json: { done: true, status: \u0027PENDIENTE\u0027, amount: 0 } }];\nreturn [{ json: { done: false, recordId: r.id, pedido: f[\u0027Pedido\u0027], paymentRequestId: f[\u0027PaymentRequestId\u0027], monto: Number(f[\u0027Monto\u0027]) || 0, fields: f } }];"
+                                     },
+                      "id":  "455c1948-0f6c-43da-81df-4ed1dc9ff9ff",
+                      "name":  "Decidir",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       880,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "2899aede-f492-4f55-8dc7-63f95bf12036",
+                                                                                   "leftValue":  "={{ $json.done }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "e9cbd836-cbdc-4e2e-8899-02e79bc3fdd9",
+                      "name":  "IF terminado",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1100,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ status: $json.status, amount: $json.amount }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "7c1c4fe8-7e7e-488f-81a6-bea205d9c5b5",
+                      "name":  "Responder estado",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1320,
+                                       60
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "=https://api.payclip.com/v2/checkout/{{ $json.paymentRequestId }}",
+                                         "genericAuthType":  "httpHeaderAuth",
+                                         "options":  {
+
+                                                     },
+                                         "authentication":  "genericCredentialType"
+                                     },
+                      "id":  "b7fd0998-5404-46f3-9b1d-472de8586a7f",
+                      "name":  "Clip: consultar pago",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1320,
+                                       340
+                                   ],
+                      "credentials":  {
+                                          "httpHeaderAuth":  {
+                                                                 "id":  "",
+                                                                 "name":  "Clip API"
+                                                             }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// No se confía en ningún aviso: se compara la respuesta de Clip contra el pedido guardado\nconst base = $(\u0027Decidir\u0027).item.json;\nconst r = $input.first().json || {};\nconst st = r.status;\nif (st === \u0027CHECKOUT_COMPLETED\u0027\n    \u0026\u0026 Math.abs(Number(r.amount) - Number(base.monto)) \u003c 0.01\n    \u0026\u0026 String((r.metadata || {}).external_reference || \u0027\u0027) === String(base.pedido)) {\n  return [{ json: { pay: true, recordId: base.recordId, pedido: base.pedido, amount: Number(r.amount), receipt_no: r.receipt_no || \u0027\u0027, fields: base.fields, pagadoEn: new Date().toISOString() } }];\n}\nconst failed = (st === \u0027CHECKOUT_CANCELLED\u0027 || st === \u0027CHECKOUT_EXPIRED\u0027);\nreturn [{ json: { pay: false, status: failed ? \u0027FALLIDO\u0027 : \u0027PENDIENTE\u0027, amount: 0 } }];"
+                                     },
+                      "id":  "fb452823-b069-43e3-a864-304e69d4f92c",
+                      "name":  "Comparar",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1540,
+                                       340
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "8ce21d2e-674d-421b-9dcb-d44187a74c20",
+                                                                                   "leftValue":  "={{ $json.pay }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "6f376059-719b-48d8-af7b-8613fdb4738b",
+                      "name":  "IF pagado",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1760,
+                                       340
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ status: $json.status, amount: 0 }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "40a32193-6015-4e00-bc52-3bfa137f9c7e",
+                      "name":  "Responder pendiente",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1980,
+                                       560
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "=https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF/{{ $json.recordId }}",
+                                         "method":  "PATCH",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify({ typecast: true, fields: { \"Estado\": \"PAGADO\", \"Logística\": \"POR ENVIAR\", \"ReceiptNo\": $json.receipt_no, \"PagadoEn\": $json.pagadoEn } }) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "874e2892-c573-40e3-964a-6a5cc24198f4",
+                      "name":  "Airtable: marcar PAGADO",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1980,
+                                       260
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const f = $(\u0027Comparar\u0027).item.json.fields || {};\nconst em = String(f[\u0027Correo\u0027] || \u0027\u0027).trim().toLowerCase();\nconst tel = String(f[\u0027Teléfono\u0027] || \u0027\u0027).replace(/\\D/g, \u0027\u0027).slice(-10);\nreturn [{ json: { emNorm: em, phNorm: tel ? \u002752\u0027 + tel : \u0027\u0027 } }];"
+                                     },
+                      "id":  "909b5dd4-dac2-4e30-9c9d-b9768be34ed1",
+                      "name":  "Normalizar para Meta",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2200,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "dataPropertyName":  "emHash",
+                                         "encoding":  "hex",
+                                         "type":  "SHA256",
+                                         "value":  "={{ $json.emNorm }}",
+                                         "action":  "hash"
+                                     },
+                      "id":  "e0a3a647-7b5a-4683-b965-87e4d49a9e0a",
+                      "name":  "Hash correo",
+                      "type":  "n8n-nodes-base.crypto",
+                      "typeVersion":  1,
+                      "position":  [
+                                       2420,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "dataPropertyName":  "phHash",
+                                         "encoding":  "hex",
+                                         "type":  "SHA256",
+                                         "value":  "={{ $json.phNorm }}",
+                                         "action":  "hash"
+                                     },
+                      "id":  "d6644b48-a6a9-43e7-86f9-d1f01e4f9e47",
+                      "name":  "Hash teléfono",
+                      "type":  "n8n-nodes-base.crypto",
+                      "typeVersion":  1,
+                      "position":  [
+                                       2640,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CONFIGURACIÓN META (API de conversiones) =====\nconst META_PIXEL_ID = \u00271676702536743834\u0027;\nconst META_CAPI_TOKEN = \u0027PON_AQUI_TOKEN_META\u0027;   // Events Manager \u003e Configuración \u003e API de conversiones \u003e Generar token\nconst TEST_EVENT_CODE = \u0027\u0027;                       // opcional: código de \"Probar eventos\" para pruebas\n// ====================================================\nconst base = $(\u0027Comparar\u0027).item.json;\nconst f = base.fields || {};\nif (!META_CAPI_TOKEN || META_CAPI_TOKEN === \u0027PON_AQUI_TOKEN_META\u0027) return [{ json: { skip: true } }];\nconst user = {};\nif ($json.emHash) user.em = [$json.emHash];\nif ($json.phHash) user.ph = [$json.phHash];\nif (f[\u0027fbp\u0027]) user.fbp = f[\u0027fbp\u0027];\nif (f[\u0027fbc\u0027]) user.fbc = f[\u0027fbc\u0027];\nconst evento = {\n  event_name: \u0027Purchase\u0027,\n  event_time: Math.floor(Date.now() / 1000),\n  event_id: String(base.pedido),                  // mismo id que el navegador =\u003e Meta deduplica\n  action_source: \u0027website\u0027,\n  event_source_url: \u0027https://gbforce.mx/gracias.html\u0027,\n  user_data: user,\n  custom_data: { currency: \u0027MXN\u0027, value: base.amount, order_id: String(base.pedido), content_name: \u0027GB FORCE\u0027, content_type: \u0027product\u0027, num_items: Number(f[\u0027Cantidad\u0027]) || 1 }\n};\nconst body = { data: [evento] };\nif (TEST_EVENT_CODE) body.test_event_code = TEST_EVENT_CODE;\nreturn [{ json: { skip: false, url: \u0027https://graph.facebook.com/v19.0/\u0027 + META_PIXEL_ID + \u0027/events?access_token=\u0027 + encodeURIComponent(META_CAPI_TOKEN), body } }];"
+                                     },
+                      "id":  "b7ddd688-5155-4b4e-bf48-7a59df55e649",
+                      "name":  "Armar evento Meta",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2860,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "0b0dad51-6bce-4c16-b444-52770be5a647",
+                                                                                   "leftValue":  "={{ $json.skip === false }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "64b68294-ed9c-41ab-932e-00c3c6e3e3d7",
+                      "name":  "IF enviar a Meta",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       3080,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "specifyBody":  "json",
+                                         "sendBody":  true,
+                                         "method":  "POST",
+                                         "options":  {
+
+                                                     },
+                                         "jsonBody":  "={{ JSON.stringify($json.body) }}",
+                                         "url":  "={{ $json.url }}"
+                                     },
+                      "id":  "6129ff16-7cf5-4c25-9cd3-815d161c4e4b",
+                      "name":  "Meta: enviar compra",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       3300,
+                                       160
+                                   ],
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CONFIGURACIÓN DE CORREOS =====\nconst FROM_EMAIL = \u0027admin@gbforce.mx\u0027;   // ej. admin@gbforce.mx (debe coincidir con la cuenta SMTP)\nconst TEAM_EMAILS = \u0027contacto@gbforce.mx\u0027;     // uno o varios separados por coma\n// ====================================\nconst base = $(\u0027Comparar\u0027).item.json;\nconst f = base.fields || {};\nconst esc = (s) =\u003e String(s == null ? \u0027\u0027 : s).replace(/[\u0026\u003c\u003e\"]/g, c =\u003e ({ \u0027\u0026\u0027: \u0027\u0026amp;\u0027, \u0027\u003c\u0027: \u0027\u0026lt;\u0027, \u0027\u003e\u0027: \u0027\u0026gt;\u0027, \u0027\"\u0027: \u0027\u0026quot;\u0027 }[c]));\nconst cajas = Number(f[\u0027Cantidad\u0027]) || 1;\nconst dir = esc(f[\u0027Calle\u0027]) + \u0027, \u0027 + esc(f[\u0027Colonia\u0027]) + \u0027, C.P. \u0027 + esc(f[\u0027CP\u0027]) + \u0027, \u0027 + esc(f[\u0027Ciudad\u0027]) + \u0027, \u0027 + esc(f[\u0027Estado de envío\u0027]);\nconst htmlCliente = \u0027\u003cdiv style=\"font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#222\"\u003e\u0027\n  + \u0027\u003ch2 style=\"margin:0 0 8px\"\u003e¡Gracias por tu compra, \u0027 + esc(String(f[\u0027Nombre\u0027] || \u0027\u0027).split(\u0027 \u0027)[0]) + \u0027!\u003c/h2\u003e\u0027\n  + \u0027\u003cp\u003eRecibimos tu pago. Tu número de pedido es \u003cb\u003e\u0027 + esc(base.pedido) + \u0027\u003c/b\u003e.\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003eResumen:\u003c/b\u003e \u0027 + cajas + (cajas === 1 ? \u0027 caja\u0027 : \u0027 cajas\u0027) + \u0027 de GB FORCE (7 viales de 10 ml c/u) · Total $\u0027 + base.amount + \u0027 MXN.\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003eEnviaremos a:\u003c/b\u003e\u003cbr\u003e\u0027 + dir + \u0027\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003e¿Qué sigue?\u003c/b\u003e Estamos preparando tu pedido. Cuando salga te mandaremos otro correo con la paquetería y tu número de guía para que sigas tu envío.\u003c/p\u003e\u0027\n  + \u0027\u003cp style=\"color:#777;font-size:13px\"\u003e¿Dudas? Llámanos al +52 33 3172 1515 o escribe a contacto@gbforce.mx.\u003cbr\u003eGB FORCE es un suplemento alimenticio; no es un medicamento.\u003c/p\u003e\u003c/div\u003e\u0027;\nconst htmlEquipo = \u0027\u003cdiv style=\"font-family:Arial,sans-serif;color:#222\"\u003e\u003ch3\u003eNuevo pedido pagado: \u0027 + esc(base.pedido) + \u0027\u003c/h3\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003e\u0027 + cajas + (cajas === 1 ? \u0027 caja\u0027 : \u0027 cajas\u0027) + \u0027\u003c/b\u003e · $\u0027 + base.amount + \u0027 MXN\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003e\u003cb\u003e\u0027 + esc(f[\u0027Nombre\u0027]) + \u0027\u003c/b\u003e\u003cbr\u003eTel: \u0027 + esc(f[\u0027Teléfono\u0027]) + \u0027\u003cbr\u003e\u0027 + dir + \u0027\u003cbr\u003eReferencias: \u0027 + esc(f[\u0027Referencias\u0027] || \u0027—\u0027) + \u0027\u003c/p\u003e\u0027\n  + \u0027\u003cp\u003ePrepáralo en la página de envíos.\u003c/p\u003e\u003c/div\u003e\u0027;\nreturn [{ json: { fromEmail: FROM_EMAIL, toCliente: f[\u0027Correo\u0027] || \u0027\u0027, subjCliente: \u0027Recibimos tu pago · pedido \u0027 + base.pedido, htmlCliente, toEquipo: TEAM_EMAILS, subjEquipo: \u0027Nuevo pedido pagado \u0027 + base.pedido + \u0027 (\u0027 + cajas + (cajas === 1 ? \u0027 caja\u0027 : \u0027 cajas\u0027) + \u0027)\u0027, htmlEquipo } }];"
+                                     },
+                      "id":  "4c05d024-8ee2-4cd4-a174-ea06a94b3979",
+                      "name":  "Armar correos",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       3520,
+                                       260
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "html":  "={{ $(\"Armar correos\").item.json.htmlCliente }}",
+                                         "fromEmail":  "={{ $(\"Armar correos\").item.json.fromEmail }}",
+                                         "subject":  "={{ $(\"Armar correos\").item.json.subjCliente }}",
+                                         "emailFormat":  "html",
+                                         "options":  {
+
+                                                     },
+                                         "toEmail":  "={{ $(\"Armar correos\").item.json.toCliente }}"
+                                     },
+                      "id":  "a3686a19-bdcf-449d-ad98-5d710d8519e7",
+                      "name":  "Correo al cliente",
+                      "type":  "n8n-nodes-base.emailSend",
+                      "typeVersion":  2.1,
+                      "position":  [
+                                       3740,
+                                       260
+                                   ],
+                      "credentials":  {
+                                          "smtp":  {
+                                                       "id":  "",
+                                                       "name":  "SMTP GB FORCE"
+                                                   }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "html":  "={{ $(\"Armar correos\").item.json.htmlEquipo }}",
+                                         "fromEmail":  "={{ $(\"Armar correos\").item.json.fromEmail }}",
+                                         "subject":  "={{ $(\"Armar correos\").item.json.subjEquipo }}",
+                                         "emailFormat":  "html",
+                                         "options":  {
+
+                                                     },
+                                         "toEmail":  "={{ $(\"Armar correos\").item.json.toEquipo }}"
+                                     },
+                      "id":  "9b570960-d4c4-411e-b74b-1a1bdc0f1e21",
+                      "name":  "Correo al equipo",
+                      "type":  "n8n-nodes-base.emailSend",
+                      "typeVersion":  2.1,
+                      "position":  [
+                                       3960,
+                                       260
+                                   ],
+                      "credentials":  {
+                                          "smtp":  {
+                                                       "id":  "",
+                                                       "name":  "SMTP GB FORCE"
+                                                   }
+                                      },
+                      "onError":  "continueRegularOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ status: \"PAGADO\", amount: $(\"Comparar\").item.json.amount }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "c14c4472-4f78-4fe2-9454-fde5d6d615e4",
+                      "name":  "Responder pagado",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       4180,
+                                       260
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Webhook confirmar":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Validar",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Validar":  {
+                                        "main":  [
+                                                     [
+                                                         {
+                                                             "node":  "IF autorizado",
+                                                             "type":  "main",
+                                                             "index":  0
+                                                         }
+                                                     ]
+                                                 ]
+                                    },
+                        "IF autorizado":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Airtable: buscar",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ],
+                                                           [
+                                                               {
+                                                                   "node":  "Responder 401",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Airtable: buscar":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Decidir",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Decidir":  {
+                                        "main":  [
+                                                     [
+                                                         {
+                                                             "node":  "IF terminado",
+                                                             "type":  "main",
+                                                             "index":  0
+                                                         }
+                                                     ]
+                                                 ]
+                                    },
+                        "IF terminado":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Responder estado",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ],
+                                                          [
+                                                              {
+                                                                  "node":  "Clip: consultar pago",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "Clip: consultar pago":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Comparar",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Comparar":  {
+                                         "main":  [
+                                                      [
+                                                          {
+                                                              "node":  "IF pagado",
+                                                              "type":  "main",
+                                                              "index":  0
+                                                          }
+                                                      ]
+                                                  ]
+                                     },
+                        "IF pagado":  {
+                                          "main":  [
+                                                       [
+                                                           {
+                                                               "node":  "Airtable: marcar PAGADO",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ],
+                                                       [
+                                                           {
+                                                               "node":  "Responder pendiente",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ]
+                                                   ]
+                                      },
+                        "Airtable: marcar PAGADO":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "Normalizar para Meta",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "Normalizar para Meta":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Hash correo",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Hash correo":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Hash teléfono",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "Hash teléfono":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Armar evento Meta",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Armar evento Meta":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "IF enviar a Meta",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "IF enviar a Meta":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Meta: enviar compra",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ],
+                                                              [
+                                                                  {
+                                                                      "node":  "Armar correos",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Meta: enviar compra":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Armar correos",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Armar correos":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Correo al cliente",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Correo al cliente":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Correo al equipo",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Correo al equipo":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Responder pagado",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

@@ -2,5 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /dashboard.html
 Disallow: /login.html
+Disallow: /envios.html
+Disallow: /pedido.html
+Disallow: /gracias.html
 
 Sitemap: https://gbforce.mx/sitemap.xml

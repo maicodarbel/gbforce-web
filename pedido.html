@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script>document.documentElement.className += ' js';</script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1676702536743834');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Finaliza tu pedido — GB FORCE</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="landing.css?v=15">
+</head>
+<body data-page="pedido">
+
+<header class="mx-nav">
+  <a href="comprar.html" class="logo"><span class="logo-gb">GB</span><span class="logo-force">FORCE</span></a>
+  <a href="comprar.html" data-keep-utm class="px-back">← Volver</a>
+</header>
+
+<main class="px-main">
+  <div class="mx-wrap px-grid">
+
+    <!-- Resumen del pedido (primero en celular) -->
+    <aside class="px-summary" aria-label="Resumen del pedido">
+      <h2 class="px-h2">Tu pedido</h2>
+      <div class="px-item">
+        <img src="assets/caja-vial.jpg" alt="Caja y vial de GB FORCE" width="120" height="87">
+        <div>
+          <b>GB FORCE</b>
+          <small>7 viales de 10 ml · 1 caja = 1 semana</small>
+        </div>
+      </div>
+      <div class="px-qty">
+        <span id="qtyLabel">Cantidad de cajas</span>
+        <div class="px-stepper" role="group" aria-labelledby="qtyLabel">
+          <button type="button" id="qtyMinus" aria-label="Quitar una caja">−</button>
+          <output id="qtyValue" aria-live="polite">1</output>
+          <button type="button" id="qtyPlus" aria-label="Agregar una caja">+</button>
+        </div>
+      </div>
+      <dl class="px-totals">
+        <div><dt>Precio por caja</dt><dd data-unit-price>$650</dd></div>
+        <div><dt>Envío</dt><dd>Incluido</dd></div>
+        <div class="px-total"><dt>Total</dt><dd id="totalValue">$650 MXN</dd></div>
+      </dl>
+      <p class="px-note">Pagas con tarjeta de débito o crédito, o en efectivo en OXXO. Sin crear cuenta.</p>
+    </aside>
+
+    <!-- Datos de envío y pago -->
+    <section class="px-card">
+      <span class="mx-eyebrow">Paso 1 de 2</span>
+      <h1 class="px-title">¿A dónde lo <em>enviamos</em>?</h1>
+
+      <form id="pedidoForm" novalidate>
+        <fieldset id="formFields" class="px-fields">
+          <div class="px-row">
+            <label class="px-field">Nombre completo
+              <input type="text" name="nombre" required autocomplete="name" maxlength="80">
+            </label>
+          </div>
+          <div class="px-row px-row-2">
+            <label class="px-field">Teléfono (10 dígitos)
+              <input type="tel" name="telefono" required inputmode="numeric" autocomplete="tel-national" maxlength="10">
+            </label>
+            <label class="px-field">Correo electrónico
+              <input type="email" name="correo" required autocomplete="email" maxlength="120">
+            </label>
+          </div>
+          <div class="px-row">
+            <label class="px-field">Calle y número
+              <input type="text" name="calle" required autocomplete="address-line1" maxlength="120">
+            </label>
+          </div>
+          <div class="px-row px-row-2">
+            <label class="px-field">Colonia
+              <input type="text" name="colonia" required autocomplete="address-line2" maxlength="80">
+            </label>
+            <label class="px-field">Código postal
+              <input type="text" name="cp" required inputmode="numeric" autocomplete="postal-code" maxlength="5">
+            </label>
+          </div>
+          <div class="px-row px-row-2">
+            <label class="px-field">Ciudad o municipio
+              <input type="text" name="ciudad" required autocomplete="address-level2" maxlength="80">
+            </label>
+            <label class="px-field">Estado
+              <select name="estado" required autocomplete="address-level1">
+                <option value="">Elige…</option>
+                <option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option>
+                <option>Campeche</option><option>Chiapas</option><option>Chihuahua</option>
+                <option>Ciudad de México</option><option>Coahuila</option><option>Colima</option>
+                <option>Durango</option><option>Estado de México</option><option>Guanajuato</option>
+                <option>Guerrero</option><option>Hidalgo</option><option>Jalisco</option>
+                <option>Michoacán</option><option>Morelos</option><option>Nayarit</option>
+                <option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option>
+                <option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option>
+                <option>Sinaloa</option><option>Sonora</option><option>Tabasco</option>
+                <option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option>
+                <option>Yucatán</option><option>Zacatecas</option>
+              </select>
+            </label>
+          </div>
+          <div class="px-row">
+            <label class="px-field">Referencias para la entrega <small>(opcional)</small>
+              <input type="text" name="referencias" autocomplete="off" maxlength="160">
+            </label>
+          </div>
+          <!-- Campo trampa para bots: las personas no lo ven -->
+          <div class="px-hp" aria-hidden="true"><label>No llenar<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+          <label class="px-check">
+            <input type="checkbox" name="aviso" required>
+            <span>Acepto el aviso de privacidad y que usen mis datos para procesar y entregar mi pedido. <!-- TODO: enlazar privacidad.html cuando exista --></span>
+          </label>
+
+          <p class="px-error" id="pedidoError" role="alert" hidden></p>
+          <button type="submit" class="mx-btn mx-btn-block" id="payBtn">Continuar al pago
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="px-secure">Pago seguro: lo procesa Clip. No guardamos los datos de tu tarjeta.</p>
+        </fieldset>
+      </form>
+
+      <!-- Paso 2: pago (se muestra cuando el pedido ya se creó) -->
+      <div id="payPanel" class="px-pay" hidden>
+        <span class="mx-eyebrow">Paso 2 de 2</span>
+        <h2 class="px-title px-title-sm">Completa tu <em>pago</em></h2>
+        <p class="px-lead">Pedido <b id="orderId">—</b>. Se abrirá la ventana segura de pago. Si no aparece, usa el botón de abajo.</p>
+        <div id="clipMount" class="px-clip"></div>
+        <p class="px-fallback" id="clipFallback" hidden>
+          ¿No se abrió el pago? <a id="clipFallbackLink" href="#">Continuar en la página segura de Clip →</a>
+        </p>
+        <button type="button" class="px-edit" id="editData">Cambiar mis datos</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="lp-footer">
+  <p>© 2026 GB FORCE · Grupo Bidao · Suplemento alimenticio; no es un medicamento. Uso exclusivo para mayores de 18 años.</p>
+  <p>¿Dudas con tu pedido? Llámanos al <a href="tel:+523331721515">+52 33 3172 1515</a> · <a href="mailto:contacto@gbforce.mx">contacto@gbforce.mx</a></p>
+</footer>
+
+<script src="analytics.js?v=1"></script>
+<script src="pedido.js?v=2"></script>
+</body>
+</html>

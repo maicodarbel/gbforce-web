@@ -1,0 +1,293 @@
+{
+    "name":  "GB FORCE - 1 crear pago (Clip)",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "path":  "gbforce-crear-pago",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+                                                         "allowedOrigins":  "https://gbforce.mx,http://localhost:8080"
+                                                     },
+                                         "httpMethod":  "POST"
+                                     },
+                      "id":  "9118adf0-daae-4489-87ff-b2522f36fdbf",
+                      "name":  "Webhook crear pago",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       0,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// ===== CONFIGURACIÓN (edita solo aquí) =====\nconst PRECIO_CAJA = 650;                          // precio real por caja (MXN). El navegador NUNCA decide el monto.\nconst ENVIO = 0;                                  // envío incluido\nconst WEBHOOK_SECRET = \u0027PON_AQUI_TU_SECRETO\u0027;     // el MISMO secreto que en el flujo \"clip-pago\"\nconst N8N_BASE = \u0027https://n8n.guiahudumaliving.online\u0027;\n// ============================================\nconst b = $input.first().json.body || {};\nconst c = b.cliente || {};\nconst clean = (s, max) =\u003e String(s == null ? \u0027\u0027 : s).replace(/[\\u0000-\\u001f\u003c\u003e]/g, \u0027 \u0027).trim().slice(0, max);\nconst fail = (msg) =\u003e [{ json: { ok: false, error: msg } }];\n\nconst qty = Number(b.qty);\nif (!Number.isInteger(qty) || qty \u003c 1 || qty \u003e 4) return fail(\u0027cantidad_invalida\u0027);\nconst cli = {\n  nombre: clean(c.nombre, 80), telefono: String(c.telefono || \u0027\u0027).replace(/\\D/g, \u0027\u0027),\n  correo: clean(c.correo, 120), calle: clean(c.calle, 120), colonia: clean(c.colonia, 80),\n  cp: String(c.cp || \u0027\u0027).replace(/\\D/g, \u0027\u0027), ciudad: clean(c.ciudad, 80), estado: clean(c.estado, 40),\n  referencias: clean(c.referencias, 160)\n};\nif (cli.nombre.length \u003c 3) return fail(\u0027nombre\u0027);\nif (!/^\\d{10}$/.test(cli.telefono)) return fail(\u0027telefono\u0027);\nif (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(cli.correo)) return fail(\u0027correo\u0027);\nif (cli.calle.length \u003c 4 || cli.colonia.length \u003c 2 || cli.ciudad.length \u003c 2 || !cli.estado) return fail(\u0027direccion\u0027);\nif (!/^\\d{5}$/.test(cli.cp)) return fail(\u0027cp\u0027);\nif (b.aviso_privacidad !== true) return fail(\u0027aviso\u0027);\n\nconst monto = Math.round((qty * PRECIO_CAJA + ENVIO) * 100) / 100;\nconst alfabeto = \u0027ABCDEFGHJKLMNPQRSTUVWXYZ23456789\u0027;\nlet id = \u0027GB-\u0027; for (let i = 0; i \u003c 6; i++) id += alfabeto[Math.floor(Math.random() * alfabeto.length)];\nconst tr = b.tracking || {};\nreturn [{ json: {\n  ok: true, pedido: id, qty, monto, cli,\n  descripcion: (\u0027GB FORCE - \u0027 + qty + (qty === 1 ? \u0027 caja\u0027 : \u0027 cajas\u0027) + \u0027 de 7 viales\u0027).slice(0, 250),\n  webhookUrl: N8N_BASE + \u0027/webhook/clip-pago?t=\u0027 + encodeURIComponent(WEBHOOK_SECRET),\n  atribucion: JSON.stringify(tr).slice(0, 4000),\n  fbp: clean(b.fbp, 120), fbc: clean(b.fbc, 200), eventId: clean(b.event_id, 80),\n  creadoEn: new Date().toISOString()\n} }];"
+                                     },
+                      "id":  "55ef6b55-3c05-48dc-be06-19afa68a306c",
+                      "name":  "Validar y calcular",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       240,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     },
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "version":  2,
+                                                                            "typeValidation":  "strict",
+                                                                            "leftValue":  "",
+                                                                            "caseSensitive":  true
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "operator":  {
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true,
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                                   "rightValue":  "",
+                                                                                   "id":  "8ada5e0c-1ec9-4c16-bbb6-ca1e58cd7c7b",
+                                                                                   "leftValue":  "={{ $json.ok }}"
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "78b0b00e-8542-4b10-8a26-3c4990bfa4ac",
+                      "name":  "IF datos válidos",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       480,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: $json.error }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  400
+                                                     }
+                                     },
+                      "id":  "d796f84d-bb6f-4c0a-b2ef-a493befca98d",
+                      "name":  "Responder 400",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       720,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF",
+                                         "method":  "POST",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify({ typecast: true, records: [ { fields: { \"Pedido\": $json.pedido, \"Estado\": \"PENDIENTE\", \"Cantidad\": $json.qty, \"Monto\": $json.monto, \"Nombre\": $json.cli.nombre, \"Teléfono\": $json.cli.telefono, \"Correo\": $json.cli.correo, \"Calle\": $json.cli.calle, \"Colonia\": $json.cli.colonia, \"CP\": $json.cli.cp, \"Ciudad\": $json.cli.ciudad, \"Estado de envío\": $json.cli.estado, \"Referencias\": $json.cli.referencias, \"Atribución\": $json.atribucion, \"fbp\": $json.fbp, \"fbc\": $json.fbc, \"EventId\": $json.eventId, \"CreadoEn\": $json.creadoEn } } ] }) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "1381d88a-acd6-4153-98e9-34b9e9452bf2",
+                      "name":  "Airtable: crear pedido",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       720,
+                                       200
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "specifyBody":  "json",
+                                         "method":  "POST",
+                                         "authentication":  "genericCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify({ amount: $(\"Validar y calcular\").item.json.monto, currency: \"MXN\", purchase_description: $(\"Validar y calcular\").item.json.descripcion, redirection_url: { success: \"https://gbforce.mx/gracias.html?o=\" + $(\"Validar y calcular\").item.json.pedido, error: \"https://gbforce.mx/pedido.html?error=1\", default: \"https://gbforce.mx/comprar.html\" }, override_settings: { locale: \"es-MX\" }, metadata: { external_reference: $(\"Validar y calcular\").item.json.pedido, customer_info: { name: $(\"Validar y calcular\").item.json.cli.nombre, email: $(\"Validar y calcular\").item.json.cli.correo, phone: Number($(\"Validar y calcular\").item.json.cli.telefono) } }, custom_payment_options: { payment_method_types: [\"debit\", \"credit\", \"cash\"] }, webhook_url: $(\"Validar y calcular\").item.json.webhookUrl }) }}",
+                                         "url":  "https://api.payclip.com/v2/checkout",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true,
+                                         "genericAuthType":  "httpHeaderAuth"
+                                     },
+                      "id":  "71be4d51-232d-479b-99d7-a1a96c936305",
+                      "name":  "Clip: crear link de pago",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       960,
+                                       200
+                                   ],
+                      "credentials":  {
+                                          "httpHeaderAuth":  {
+                                                                 "id":  "",
+                                                                 "name":  "Clip API"
+                                                             }
+                                      },
+                      "onError":  "continueErrorOutput"
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "=https://api.airtable.com/v0/appkgaQDxgrcqWdvB/tblrWKkkEw8uw3MQF/{{ $(\"Airtable: crear pedido\").item.json.records[0].id }}",
+                                         "method":  "PATCH",
+                                         "authentication":  "predefinedCredentialType",
+                                         "jsonBody":  "={{ JSON.stringify({ fields: { \"PaymentRequestId\": $(\"Clip: crear link de pago\").item.json.payment_request_id } }) }}",
+                                         "nodeCredentialType":  "airtableTokenApi",
+                                         "specifyBody":  "json",
+                                         "options":  {
+
+                                                     },
+                                         "sendBody":  true
+                                     },
+                      "id":  "819b7ac8-4c48-4445-9a92-a5a4f97fcc8d",
+                      "name":  "Airtable: guardar id de pago",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1200,
+                                       120
+                                   ],
+                      "credentials":  {
+                                          "airtableTokenApi":  {
+                                                                   "id":  "",
+                                                                   "name":  "Airtable Pedidos"
+                                                               }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ order_id: $(\"Validar y calcular\").item.json.pedido, payment_request_id: $(\"Clip: crear link de pago\").item.json.payment_request_id, payment_request_url: $(\"Clip: crear link de pago\").item.json.payment_request_url }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "1fea32c8-df50-4643-8369-80381add092f",
+                      "name":  "Responder OK",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1440,
+                                       120
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "responseBody":  "={{ JSON.stringify({ error: \"pago_no_disponible\" }) }}",
+                                         "respondWith":  "json",
+                                         "options":  {
+                                                         "responseCode":  502
+                                                     }
+                                     },
+                      "id":  "e188ec08-b6c8-4250-b063-b1acebf1a4d5",
+                      "name":  "Responder 502 (Clip falló)",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1200,
+                                       360
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Webhook crear pago":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Validar y calcular",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Validar y calcular":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "IF datos válidos",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "IF datos válidos":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Airtable: crear pedido",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ],
+                                                              [
+                                                                  {
+                                                                      "node":  "Responder 400",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Airtable: crear pedido":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "Clip: crear link de pago",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "Clip: crear link de pago":  {
+                                                         "main":  [
+                                                                      [
+                                                                          {
+                                                                              "node":  "Airtable: guardar id de pago",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ],
+                                                                      [
+                                                                          {
+                                                                              "node":  "Responder 502 (Clip falló)",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "Airtable: guardar id de pago":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "Responder OK",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

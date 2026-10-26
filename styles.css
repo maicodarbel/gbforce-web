@@ -2683,3 +2683,110 @@ img { max-width: 100%; display: block; }
   .contact-grid { grid-template-columns: 1fr; }
   .contact-card { padding: 1.5rem; }
 }
+/* ── LANDING CORTA (comprar / asociados / gracias) ── */
+.lp-header { position: sticky; top: 0; z-index: 50; background: rgba(9,9,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--black-border); }
+.lp-header-inner { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.lp-header-cta { padding: 0.5rem 1rem; font-size: 0.8rem; }
+.lp-wrap { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+.lp-narrow { max-width: 720px; }
+.lp-hero { padding: 2rem 0 2.5rem; background: var(--black); }
+.lp-hero-grid { display: grid; gap: 1.5rem; align-items: center; }
+.lp-hero-img img { width: 100%; height: auto; border-radius: var(--radius); display: block; }
+.lp-title { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.05; letter-spacing: 0.02em; color: var(--white); margin: 0.75rem 0; }
+.lp-lead { font-size: 1.05rem; line-height: 1.6; color: var(--white-dim); margin-bottom: 1.25rem; }
+.lp-price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.lp-price { font-family: var(--font-display); font-size: 2.6rem; color: var(--gold); }
+.lp-price-note { font-size: 0.85rem; color: var(--white-dim); }
+.lp-trust { list-style: none; padding: 0; margin: 1rem 0 0; font-size: 0.85rem; color: var(--white-dim); }
+.lp-trust li { padding: 0.25rem 0 0.25rem 1.2rem; position: relative; }
+.lp-trust li::before { content: "✓"; position: absolute; left: 0; color: var(--gold); }
+.lp-section { padding: 2.5rem 0; background: var(--black-soft); }
+.lp-section-alt { background: var(--black); }
+.lp-h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 4.5vw, 2.2rem); color: var(--white); margin-bottom: 1.25rem; }
+.lp-cards { display: grid; gap: 1rem; }
+.lp-card { background: var(--black-card); border: 1px solid var(--black-border); border-radius: var(--radius); padding: 1.25rem; }
+.lp-card h3 { color: var(--gold); margin-bottom: 0.5rem; }
+.lp-card p { color: var(--white-dim); font-size: 0.92rem; line-height: 1.6; }
+.lp-link { color: var(--gold); text-decoration: underline; }
+.lp-cta-center { text-align: center; margin-top: 1.5rem; }
+.lp-small { font-size: 0.82rem; color: var(--white-dim); line-height: 1.6; margin-top: 1rem; }
+.lp-help { text-align: center; margin-top: 1.5rem; color: var(--white-dim); font-size: 0.9rem; }
+.lp-help a { color: var(--gold); }
+.lp-final { text-align: center; }
+.lp-table { width: 100%; border-collapse: collapse; background: var(--black-card); border: 1px solid var(--black-border); }
+.lp-table th, .lp-table td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--black-border); font-weight: 400; color: var(--white-dim); font-size: 0.92rem; }
+.lp-table td { text-align: right; color: var(--white); white-space: nowrap; }
+.lp-table-total th, .lp-table-total td { color: var(--gold); font-weight: 600; border-bottom: 0; }
+.lp-form { display: grid; gap: 1rem; margin-top: 1rem; }
+.lp-form label { display: grid; gap: 0.4rem; font-size: 0.88rem; color: var(--white-dim); }
+.lp-form input, .lp-form select { background: var(--black-card); border: 1px solid var(--black-border); color: var(--white); padding: 0.75rem; border-radius: var(--radius); font: inherit; font-size: 1rem; }
+.lp-form input:focus, .lp-form select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.lp-error { color: var(--red-light); font-size: 0.88rem; }
+.lp-ok { background: var(--black-card); border: 1px solid var(--gold); border-radius: var(--radius); padding: 1.25rem; margin-top: 1rem; color: var(--white-dim); }
+.lp-ok h3 { color: var(--gold); margin-bottom: 0.5rem; }
+.lp-ok a { color: var(--gold); }
+.lp-footer { padding: 1.5rem 1rem; text-align: center; font-size: 0.78rem; color: var(--white-dim); border-top: 1px solid var(--black-border); background: var(--black); }
+.lp-footer a { color: var(--gold); }
+.lp-thanks { min-height: 60vh; display: flex; align-items: center; }
+@media (min-width: 768px) {
+  .lp-hero-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .lp-cards { grid-template-columns: repeat(3, 1fr); }
+}
+.lp-cards-pain { grid-template-columns: 1fr; }
+.lp-cards-pain .lp-card p { font-size: 1.05rem; color: var(--white); }
+.lp-video { width: 100%; border-radius: var(--radius); background: #000; display: block; }
+.lp-price-center { justify-content: center; }
+.lp-buy .btn-gold { max-width: 420px; }
+@media (min-width: 768px) {
+  .lp-cards-pain { grid-template-columns: repeat(2, 1fr); }
+  .lp-cards-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1000px) {
+  .lp-cards-4 { grid-template-columns: repeat(4, 1fr); }
+}
+/* comprar: hero apilado, dolores llamativos, FAQ plegable */
+.lp-hero-stack { max-width: 720px; text-align: center; }
+.lp-hero-stack .lp-hero-img img { max-width: 380px; margin: 1rem auto 1.25rem; }
+.lp-h2-big { font-size: clamp(2rem, 6vw, 3rem); text-align: center; color: var(--gold); }
+.lp-pain { display: grid; gap: 0.9rem; max-width: 760px; margin: 0 auto; }
+.lp-pain-item { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; background: linear-gradient(135deg, var(--black-card), #1d1a10); border: 1px solid rgba(201,168,76,0.35); border-left: 5px solid var(--gold); border-radius: var(--radius); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+.lp-pain-emoji { font-size: 2rem; line-height: 1; flex-shrink: 0; }
+.lp-pain-item p { font-size: 1.15rem; line-height: 1.4; color: var(--white); margin: 0; }
+.lp-pain-item strong { color: var(--gold-light); }
+.lp-faq-all { border: 1px solid var(--black-border); border-radius: var(--radius); background: var(--black-card); }
+.lp-faq-all summary { cursor: pointer; list-style: none; padding: 1.1rem 1.25rem; font-family: var(--font-display); font-size: 1.4rem; color: var(--white); display: flex; justify-content: space-between; align-items: center; }
+.lp-faq-all summary::-webkit-details-marker { display: none; }
+.lp-faq-all summary::after { content: "+"; color: var(--gold); font-size: 1.6rem; transition: transform var(--transition); }
+.lp-faq-all[open] summary::after { transform: rotate(45deg); }
+.lp-faq-all .faq-list { margin: 0; padding: 0 1.25rem; }
+.lp-faq-all .lp-help { padding-bottom: 1.25rem; }
+/* sticky móvil, certificaciones, para quién */
+.lp-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom)); background: rgba(9,9,9,0.95); border-top: 1px solid var(--black-border); transition: transform 0.25s ease; }
+.lp-sticky .btn-gold { max-width: 520px; margin: 0 auto; display: block; text-align: center; }
+.lp-sticky-hide { transform: translateY(110%); }
+body[data-page="comprar"], body[data-page="asociados"] { padding-bottom: 4.5rem; }
+@media (min-width: 768px) {
+  .lp-sticky { display: none; }
+  body[data-page="comprar"], body[data-page="asociados"] { padding-bottom: 0; }
+}
+.lp-certs { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+.lp-cert { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.4rem; padding: 1.1rem; background: var(--black-card); border: 1px solid var(--black-border); border-radius: var(--radius); }
+.lp-cert img { height: 56px; width: auto; max-width: 140px; object-fit: contain; background: #fff; padding: 6px 10px; border-radius: 4px; }
+.lp-cert span { color: var(--white); font-weight: 600; }
+.lp-cert small { color: var(--white-dim); font-size: 0.78rem; }
+.lp-fit-yes { border-left: 4px solid var(--gold); }
+.lp-fit-no { border-left: 4px solid var(--black-border); }
+@media (min-width: 768px) {
+  .lp-certs { grid-template-columns: repeat(3, 1fr); }
+  .lp-fit { grid-template-columns: repeat(2, 1fr); }
+}
+/* ¿Te suena familiar? foto izquierda + frase derecha */
+.lp-pain-row { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 1rem; padding: 0.75rem; background: linear-gradient(135deg, var(--black-card), #1d1a10); border: 1px solid rgba(201,168,76,0.35); border-left: 5px solid var(--gold); border-radius: var(--radius); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+.lp-pain-row img { width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius); background: var(--black-border); display: block; }
+.lp-pain-row p { font-size: 1.1rem; line-height: 1.4; color: var(--white); margin: 0; }
+.lp-pain-row strong { color: var(--gold-light); }
+@media (min-width: 768px) {
+  .lp-pain-row { grid-template-columns: 200px 1fr; gap: 1.5rem; padding: 1rem; }
+  .lp-pain-row img { width: 200px; height: 200px; }
+  .lp-pain-row p { font-size: 1.3rem; }
+}
