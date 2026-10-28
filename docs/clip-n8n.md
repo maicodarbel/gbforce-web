@@ -19,7 +19,7 @@ Estado (2026-10-26): **todo el recorrido funciona en pruebas**: pago con Clip, c
 | `Clip API` | Credencial *Header Auth* | Nombre: `Authorization` · Valor: `Basic ` + base64(`API_KEY:CLAVE_SECRETA`) |
 | `Airtable` | Credencial Airtable | La que ya se usa en el flujo de asociados |
 | `PRECIO_CAJA` | Variable / nodo Set | `650` (precio real; **solo el servidor decide el monto**) |
-| `ENVIO` | Variable | `0` (envío incluido) |
+| `ENVIO_FIJO` / `ENVIO_GRATIS_DESDE` | Variable | `ENVIO_FIJO = 129` (MXN; si fuera `null` el flujo rechaza el pedido con `envio_pendiente`); `ENVIO_GRATIS_DESDE = 3` cajas |
 | `WEBHOOK_SECRET` | Variable | Cadena larga aleatoria (la URL del webhook de Clip llevará `?t=<WEBHOOK_SECRET>`) |
 | `META_PIXEL_ID` | Variable | `1676702536743834` |
 | `META_CAPI_TOKEN` | Credencial/variable | Token de acceso de la API de conversiones (Events Manager) |
@@ -60,14 +60,15 @@ Cuerpo que envía la página:
   "qty": 2,
   "cliente": { "nombre": "", "telefono": "", "correo": "", "calle": "", "colonia": "", "cp": "", "ciudad": "", "estado": "", "referencias": "" },
   "aviso_privacidad": true,
+  "promociones": false,
   "tracking": { "utm_source": "", "fbclid": "" },
   "fbp": "", "fbc": "", "event_id": "", "page_url": "", "timestamp": ""
 }
 ```
 
 Nodos:
-1. **Code — validar y sanear**: `qty` entero entre 1 y 4 (si no, error 400); `telefono` 10 dígitos; `correo` válido; `cp` 5 dígitos; textos recortados a su largo máximo; `aviso_privacidad === true`. **Ignorar cualquier campo `amount`/`monto`/`precio` que llegue.**
-2. **Set — calcular**: `monto = qty * PRECIO_CAJA + ENVIO` (número con 2 decimales); `pedido = 'GB-' + 6 caracteres aleatorios`.
+1. **Code — validar y sanear**: `qty` entero entre 1 y 12 (si no, error 400); `telefono` 10 dígitos; `correo` válido; `cp` 5 dígitos; textos recortados a su largo máximo; `aviso_privacidad === true`. **Ignorar cualquier campo `amount`/`monto`/`precio` que llegue.**
+2. **Set — calcular**: `monto = qty * PRECIO_CAJA + envio` (`envio = 0` si `qty >= ENVIO_GRATIS_DESDE`, si no `ENVIO_FIJO`) (número con 2 decimales); `pedido = 'GB-' + 6 caracteres aleatorios`.
 3. **Airtable — crear** registro en `Pedidos` con `Estado = PENDIENTE`.
 4. **HTTP Request — Clip**: `POST https://api.payclip.com/v2/checkout`, credencial `Clip API`, cuerpo JSON:
 ```json
@@ -218,7 +219,7 @@ Compra real con Clip → pedido PAGADO en Airtable → correo de confirmación a
 - **Supabase:** proyecto `lcaqniptbppilsiopvgd` (URL pública y clave `anon` ya en `envios.js` y en el flujo 6).
 - **Secreto de los flujos:** los archivos listos para importar con el secreto puesto están **fuera del repo**, en el Escritorio del dueño (`gbforce-n8n-listos`). Los de `docs/n8n/` conservan el marcador `PON_AQUI_TU_SECRETO` para no subirlo a Git. El secreto se escribió una vez en un chat: **conviene rotarlo** (cambiarlo en los flujos 1 a 5).
 - **Corrección del flujo 6:** el nodo «Airtable: listar envíos» ya no manda 14 parámetros `fields[]`, porque n8n los colapsaba y la página recibía los pedidos vacíos; ahora trae todos los campos y «Armar lista» filtra lo que se muestra.
-- **Variables de producción:** `PRECIO_CAJA = 650` en el flujo 1 (verificar), `ENVIO = 0`.
+- **Variables de producción:** `PRECIO_CAJA = 650` en el flujo 1 (verificar), `ENVIO_FIJO = 129`, `ENVIO_GRATIS_DESDE = 3`.
 
 ### Pendientes
 1. **Token de la API de conversiones de Meta:** al generarlo en Datos Gb Force sale «No se pudo generar el token… infringe Condiciones/Políticas», sin restricción visible en Calidad de la cuenta. Reintentar, probar «sin Dataset Quality API», completar el registro del portafolio (aviso «Termina de registrarte») o abrir un caso en el Centro de ayuda de Meta. Mientras no haya token, el flujo 4 se salta Meta y el Pixel del navegador sigue enviando `Purchase` desde `gracias.html`.

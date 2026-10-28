@@ -33,7 +33,7 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=14">
-<link rel="stylesheet" href="landing.css?v=15">
+<link rel="stylesheet" href="landing.css?v=20">
 </head>
 <body data-page="comprar">
 
@@ -272,14 +272,18 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
     <div class="mx-wrap">
       <span class="mx-eyebrow mx-reveal">Tu caja semanal</span>
       <h2 class="mx-h2 mx-reveal">Elige cómo <em>comprarlo</em></h2>
+      <div class="mx-choose-btns mx-reveal">
+        <a href="#lpPartnerCard" class="mx-btn mx-btn-block">Con un socio</a>
+        <a href="#lpOnline" class="mx-btn mx-btn-block">En línea</a>
+      </div>
       <div class="mx-choose">
 
-        <div class="mx-choice mx-choice-main mx-reveal" id="lpOnline">
+        <div class="mx-choice mx-reveal mx-d1" id="lpOnline">
           <span class="mx-choice-tag">Compra en línea</span>
           <h3>Recíbelo donde estés</h3>
           <p class="mx-buy-sub">7 viales de 10 ml</p>
           <div class="mx-price" data-price>$650</div>
-          <p class="mx-price-note">MXN · Envío a toda la República</p>
+          <p class="mx-price-note">MXN · Envío a toda la República · Gratis desde 3 cajas</p>
           <a href="pedido.html" class="mx-btn mx-btn-block" data-buy>Comprar
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -290,14 +294,14 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
           </ul>
         </div>
 
-        <div class="mx-choice mx-reveal mx-d1" id="lpPartnerCard">
+        <div class="mx-choice mx-choice-main mx-reveal" id="lpPartnerCard">
           <span class="mx-choice-tag">Con un socio</span>
           <h3>Compra con un socio de tu ciudad</h3>
           <p class="mx-choice-text">Un socio te explica GB FORCE y te orienta sobre la entrega. Tú eliges: en línea o con alguien cerca de ti.</p>
           <ul class="mx-checks">
             <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Atención personal para resolver tus dudas</li>
             <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Alguien de tu ciudad, cerca de ti</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Pregunta por la entrega en tu zona</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Pregunta y ahorra:</strong> podrías ahorrarte el costo de envío</span></li>
           </ul>
           <label for="lpState" class="mx-label">Selecciona tu estado</label>
           <select id="lpState" class="mx-select">
@@ -336,10 +340,10 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
             <option>Zacatecas</option>
           </select>
           <div id="lpPartners" class="mx-partners" aria-live="polite"></div>
+          <p class="mx-small mx-center" style="margin-top:1.25rem">¿Te interesa venderlo? <a href="asociados.html" data-keep-utm>Conoce el modelo de Asociado GB FORCE</a></p>
         </div>
 
       </div>
-      <p class="mx-small mx-center">¿Te interesa venderlo? <a href="asociados.html" data-keep-utm>Conoce el modelo de Asociado GB FORCE</a></p>
     </div>
   </section>
 
@@ -363,7 +367,7 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
           </div>
           <div class="faq-item">
             <button class="faq-q">¿Quién lo fabrica? <span>+</span></button>
-            <div class="faq-a"><p>GB FORCE es una marca de Grupo Bidao. <a href="index.html#respaldo" data-keep-utm class="lp-link">Ver certificaciones y respaldo</a>.</p></div>
+            <div class="faq-a"><p>GB FORCE es producido por Grupo Bidao. <a href="index.html#respaldo" data-keep-utm class="lp-link">Ver certificaciones y respaldo</a>.</p></div>
           </div>
         </div>
         <p class="lp-help">¿Otra duda? Llámanos al <a href="tel:+523331721515">+52 33 3172 1515</a>.</p>
@@ -373,9 +377,9 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 </main>
 
 <footer class="lp-footer">
-  <p>© 2026 GB FORCE · Grupo Bidao · Este producto es un suplemento alimenticio; no es un medicamento.</p>
+  <p>© 2026 GB FORCE · Este producto es un suplemento alimenticio; no es un medicamento.</p>
   <p><a href="index.html" data-keep-utm>Información completa del producto</a> · <a href="mailto:contacto@gbforce.mx">contacto@gbforce.mx</a></p>
-  <p>Uso exclusivo para mayores de 18 años. Los resultados pueden variar. <!-- TODO: enlaces a Aviso de privacidad y Términos cuando existan --></p>
+  <p>Uso exclusivo para mayores de 18 años. Los resultados pueden variar. <a href="privacidad.html">Aviso de privacidad</a> · <a href="terminos.html">Términos y condiciones</a> · <a href="devoluciones.html">Devoluciones</a></p>
 </footer>
 
 

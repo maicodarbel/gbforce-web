@@ -15,7 +15,9 @@
   var CREATE_URL = 'https://n8n.guiahudumaliving.online/webhook/gbforce-crear-pago'; // TODO: confirmar al crear el flujo en n8n
   var CLIP_SDK_URL = 'https://sdk.clip.mx/js/v1/checkout.js';
   var PRICE_MXN = 650;   // SOLO para mostrar en pantalla; el cobro real lo fija el servidor
-  var MAX_QTY = 4;
+  var SHIPPING_FEE = 129;  // costo de envío fijo (MXN) para menos de FREE_SHIPPING_QTY cajas; SOLO para mostrar, el cobro real lo fija el servidor
+  var FREE_SHIPPING_QTY = 3;   // envío gratis desde 3 cajas
+  var MAX_QTY = 12;          // 12 cajas ($7,800) es menos que el paquete de socio comercial (20 x $399 = $7,980): arriba de esto se atiende como posible socio
   var SDK_WAIT_MS = 6000;
 
   var TRACK_KEYS = ['ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
@@ -34,9 +36,12 @@
   var qty = 1;
   function renderTotals() {
     $('qtyValue').textContent = qty;
-    $('totalValue').textContent = money(qty * PRICE_MXN) + ' MXN';
+    var ship = qty >= FREE_SHIPPING_QTY ? 0 : SHIPPING_FEE;
+    $('shipValue').textContent = ship === 0 ? 'Gratis' : (ship === null ? 'Por definir' : money(ship));
+    $('totalValue').textContent = money(qty * PRICE_MXN + (ship || 0)) + ' MXN';
     $('qtyMinus').disabled = qty <= 1;
     $('qtyPlus').disabled = qty >= MAX_QTY;
+    $('bulkNote').hidden = qty < MAX_QTY;
     var btn = $('payBtn');
     if (btn && !btn.disabled) btn.firstChild.nodeValue = 'Continuar al pago ';
   }
@@ -95,9 +100,10 @@
 
     var eventId = gbGenEventId();
     var payload = {
-      qty: qty,                       // el servidor valida 1-4 y calcula el monto
+      qty: qty,                       // el servidor valida 1-12 y calcula el monto
       cliente: data,
       aviso_privacidad: true,
+      promociones: !!f.promociones.checked,
       tracking: track,
       fbp: window.gbFbData ? gbFbData.fbp : '',
       fbc: window.gbFbData ? gbFbData.fbc : '',

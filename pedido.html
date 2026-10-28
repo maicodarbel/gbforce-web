@@ -31,7 +31,7 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=14">
-<link rel="stylesheet" href="landing.css?v=15">
+<link rel="stylesheet" href="landing.css?v=17">
 </head>
 <body data-page="pedido">
 
@@ -63,9 +63,10 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
       </div>
       <dl class="px-totals">
         <div><dt>Precio por caja</dt><dd data-unit-price>$650</dd></div>
-        <div><dt>Envío</dt><dd>Incluido</dd></div>
+        <div><dt>Envío <small>(gratis desde 3 cajas)</small></dt><dd id="shipValue">Por definir</dd></div>
         <div class="px-total"><dt>Total</dt><dd id="totalValue">$650 MXN</dd></div>
       </dl>
+      <p class="px-bulk" id="bulkNote" hidden>12 cajas es el máximo por pedido en línea. ¿Compras en volumen? <a href="mailto:contacto@gbforce.mx">Contáctanos</a>: podemos ofrecerte un mejor precio. O <a href="oportunidad.html">hazte socio comercial</a> y obtén una ganancia por vender GB FORCE.</p>
       <p class="px-note">Pagas con tarjeta de débito o crédito, o en efectivo en OXXO. Sin crear cuenta.</p>
     </aside>
 
@@ -133,7 +134,12 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 
           <label class="px-check">
             <input type="checkbox" name="aviso" required>
-            <span>Acepto el aviso de privacidad y que usen mis datos para procesar y entregar mi pedido. <!-- TODO: enlazar privacidad.html cuando exista --></span>
+            <span>Acepto el <a href="privacidad.html" target="_blank" rel="noopener">aviso de privacidad</a> y que usen mis datos para procesar y entregar mi pedido.</span>
+          </label>
+
+          <label class="px-check">
+            <input type="checkbox" name="promociones">
+            <span>Deseo recibir promociones, ofertas y novedades de GB FORCE por correo electrónico o mensajes a mi teléfono. Puedo darme de baja en cualquier momento. <small>(Opcional)</small></span>
           </label>
 
           <p class="px-error" id="pedidoError" role="alert" hidden></p>
@@ -161,11 +167,12 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 </main>
 
 <footer class="lp-footer">
-  <p>© 2026 GB FORCE · Grupo Bidao · Suplemento alimenticio; no es un medicamento. Uso exclusivo para mayores de 18 años.</p>
+  <p>© 2026 GB FORCE · Suplemento alimenticio; no es un medicamento. Uso exclusivo para mayores de 18 años.</p>
+  <p><a href="privacidad.html">Aviso de privacidad</a> · <a href="terminos.html">Términos y condiciones</a> · <a href="devoluciones.html">Devoluciones</a></p>
   <p>¿Dudas con tu pedido? Llámanos al <a href="tel:+523331721515">+52 33 3172 1515</a> · <a href="mailto:contacto@gbforce.mx">contacto@gbforce.mx</a></p>
 </footer>
 
 <script src="analytics.js?v=1"></script>
-<script src="pedido.js?v=2"></script>
+<script src="pedido.js?v=9"></script>
 </body>
 </html>

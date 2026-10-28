@@ -200,6 +200,16 @@ body[data-page="comprar"] .lp-footer { background: #070707; }
 /* ── Elige cómo comprarlo: en línea o con un socio ── */
 .mx-choose { display: grid; gap: 1.25rem; grid-template-columns: 1fr; align-items: stretch; margin-bottom: 1.5rem; }
 .mx-choice { position: relative; padding: 1.75rem 1.4rem; border-radius: 28px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)); border: 1px solid var(--mx-glass-border); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); text-align: center; }
+#lpPartnerCard { order: -1; }
+#lpPartnerCard, #lpOnline { scroll-margin-top: 90px; }
+.mx-choose-btns { display: grid; gap: 0.75rem; grid-template-columns: 1fr; max-width: 520px; margin: 0 auto 1.75rem; }
+.mx-choose-btns .mx-btn-block { width: 100%; min-width: 0; }
+/* El botón bajo el mouse (o con foco) se ve dorado; el otro queda con solo borde */
+.mx-choose-btns:not(:has(a:last-child:is(:hover, :focus-visible))) a:last-child,
+.mx-choose-btns:has(a:last-child:is(:hover, :focus-visible)) a:first-child { background: transparent; color: var(--gold-light); border: 1.5px solid rgba(201, 168, 76, 0.6); box-shadow: none; transform: none; }
+.mx-choose-btns:not(:has(a:last-child:is(:hover, :focus-visible))) a:last-child::after,
+.mx-choose-btns:has(a:last-child:is(:hover, :focus-visible)) a:first-child::after { display: none; }
+@media (min-width: 640px) { .mx-choose-btns { grid-template-columns: 1fr 1fr; } }
 .mx-choice-main { border-color: rgba(201, 168, 76, 0.55); box-shadow: 0 0 0 6px rgba(201, 168, 76, 0.06), 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 90px rgba(201, 168, 76, 0.16); }
 .mx-choice-tag { display: inline-block; padding: 0.35rem 0.85rem; margin-bottom: 0.9rem; border-radius: 999px; background: rgba(201, 168, 76, 0.14); border: 1px solid rgba(201, 168, 76, 0.4); color: var(--gold-light); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .mx-choice h3 { font-family: var(--font-display); font-size: clamp(1.9rem, 6vw, 2.5rem); letter-spacing: 0.02em; line-height: 1.05; margin-bottom: 0.6rem; }
@@ -322,6 +332,8 @@ body[data-page="pedido"] * { box-sizing: border-box; }
 .px-totals dt, .px-totals dd { margin: 0; }
 .px-totals .px-total { margin-top: 0.3rem; padding-top: 0.9rem; border-top: 1px solid rgba(255,255,255,0.12); color: var(--white); font-weight: 700; font-size: 1.2rem; }
 .px-totals .px-total dd { color: var(--gold-light); }
+.px-bulk { margin: 0.9rem 0 0; padding: 0.8rem 1rem; border-radius: 14px; background: rgba(201, 168, 76, 0.1); border: 1px solid rgba(201, 168, 76, 0.4); font-size: 0.9rem; line-height: 1.5; color: rgba(245, 242, 236, 0.9); }
+.px-bulk a { color: var(--gold-light); font-weight: 600; }
 .px-note { margin: 0.9rem 0 0; font-size: 0.85rem; color: var(--white-dim); line-height: 1.5; }
 .px-fields { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 0.9rem; }
 .px-fields:disabled { opacity: 0.55; }
@@ -393,5 +405,14 @@ body[data-page="gracias"] * { box-sizing: border-box; }
 .gx-help > p:first-child { margin: 0 0 0.8rem; color: var(--white-dim); }
 .gx-mail { margin: 0.8rem 0 0; font-size: 0.9rem; color: var(--white-dim); }
 .gx-mail a { color: var(--gold-light); }
+/* Texto legal largo (privacidad.html) */
+.gx-wrap-wide { max-width: 780px; }
+.gx-prose h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.03em; color: var(--gold-light); margin: 1.8rem 0 0.6rem; }
+.gx-prose h2:first-child { margin-top: 0; }
+.gx-prose p, .gx-prose li { color: rgba(245,242,236,0.82); line-height: 1.7; font-size: 0.97rem; }
+.gx-prose p { margin: 0 0 0.9rem; }
+.gx-prose ul { margin: 0 0 0.9rem; padding-left: 1.2rem; display: grid; gap: 0.35rem; }
+.gx-prose a { color: var(--gold-light); }
+.gx-prose b { color: var(--white); }
 @media (min-width: 768px) { .gx-main { padding-top: 7rem; } .gx-card { padding: 2rem; } }
 @media (prefers-reduced-motion: reduce) { .gx-check-wait { animation: none; } }
