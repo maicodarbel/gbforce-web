@@ -176,6 +176,36 @@
     });
   });
 
+  // ── Oculta el menú mientras la ventana de pago de Clip está abierta ──
+  // Clip agrega su ventana (iframe o capa fija) al documento; la seguimos y quitamos el menú
+  // mientras sea visible. Al cerrarla, el menú vuelve a aparecer.
+  var clipNodes = [];
+  var clipWatching = false;
+  function isVisible(el) {
+    if (!el.isConnected || !el.getClientRects().length) return false;
+    var cs = getComputedStyle(el);
+    return cs.visibility !== 'hidden' && cs.display !== 'none' && cs.opacity !== '0';
+  }
+  function syncNav() {
+    clipNodes = clipNodes.filter(function (n) { return n.isConnected; });
+    document.body.classList.toggle('px-paying', clipNodes.some(isVisible));
+  }
+  function watchClipModal() {
+    if (clipWatching) return;
+    clipWatching = true;
+    new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        m.addedNodes.forEach(function (n) {
+          if (n.nodeType !== 1 || /^(SCRIPT|STYLE|LINK|BUTTON)$/.test(n.tagName)) return;
+          if (n.closest && n.closest('header, main, footer') && n.tagName !== 'IFRAME' && !n.querySelector('iframe')) return;
+          if (n.tagName === 'IFRAME' || n.querySelector('iframe') || getComputedStyle(n).position === 'fixed') clipNodes.push(n);
+        });
+      });
+      syncNav();
+    }).observe(document.body, { childList: true, subtree: true });
+    setInterval(syncNav, 400);   // detecta también cuando Clip solo oculta su ventana al cerrarla
+  }
+
   // ── Pago con Clip (embebido, con respaldo) ──
   var mounted = false;
   function openPayment(res) {
@@ -183,6 +213,7 @@
     $('payPanel').hidden = false;
     fields.disabled = true;
     $('payPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    watchClipModal();
 
     var fb = $('clipFallback');
     var link = $('clipFallbackLink');
