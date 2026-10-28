@@ -62,7 +62,48 @@
   function clearError() { errBox.hidden = true; }
 
   form.elements.telefono.addEventListener('input', function (e) { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); });
-  form.elements.cp.addEventListener('input', function (e) { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); });
+  form.elements.cp.addEventListener('input', function (e) {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    if (e.target.value.length === 5) lookupCp(e.target.value);
+  });
+
+  // ── Autocompletar estado, municipio y colonias con el código postal ──
+  // API pública de SEPOMEX (Postali). Si falla o no encuentra el CP, el formulario sigue manual.
+  var CP_API = 'https://postali.app/api/v1/mx/cp/';
+  var cpSeq = 0;   // descarta respuestas de CPs que ya cambiaron
+  function plain(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
+  function matchState(name) {
+    var n = plain(name);
+    if (n === 'mexico') n = 'estado de mexico';   // SEPOMEX llama "México" al Estado de México
+    var opts = form.elements.estado.options;
+    for (var i = 1; i < opts.length; i++) {
+      var o = plain(opts[i].value);
+      if (o === n || n.indexOf(o + ' de ') === 0) return opts[i].value;   // "Coahuila de Zaragoza" → "Coahuila"
+    }
+    return '';
+  }
+  function lookupCp(cp) {
+    var seq = ++cpSeq;
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
+    fetch(CP_API + cp, ctrl ? { signal: ctrl.signal } : {}).then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    }).then(function (res) {
+      clearTimeout(t);
+      if (seq !== cpSeq || !res) return;
+      var f = form.elements;
+      var estado = matchState(res.estado);
+      if (estado) f.estado.value = estado;
+      if (res.municipio) f.ciudad.value = res.municipio;
+      var names = (res.asentamientos || []).map(function (a) { return a.nombre; }).filter(Boolean);
+      var list = $('coloniasList');
+      list.innerHTML = '';
+      names.forEach(function (n) { var o = document.createElement('option'); o.value = n; list.appendChild(o); });
+      if (names.length === 1) f.colonia.value = names[0];
+      else if (names.indexOf(f.colonia.value) === -1) f.colonia.value = '';   // la persona elige de la lista
+    }).catch(function () { clearTimeout(t); });
+  }
 
   function validate(d) {
     if (d.nombre.length < 3) return 'Escribe tu nombre completo.';

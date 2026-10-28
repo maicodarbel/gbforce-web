@@ -96,11 +96,12 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
             </label>
           </div>
           <div class="px-row px-row-2">
-            <label class="px-field">Colonia
-              <input type="text" name="colonia" required autocomplete="address-line2" maxlength="80">
-            </label>
             <label class="px-field">Código postal
               <input type="text" name="cp" required inputmode="numeric" autocomplete="postal-code" maxlength="5">
+            </label>
+            <label class="px-field">Colonia
+              <input type="text" name="colonia" required autocomplete="address-line2" maxlength="80" list="coloniasList">
+              <datalist id="coloniasList"></datalist>
             </label>
           </div>
           <div class="px-row px-row-2">
@@ -173,6 +174,6 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 </footer>
 
 <script src="analytics.js?v=1"></script>
-<script src="pedido.js?v=9"></script>
+<script src="pedido.js?v=10"></script>
 </body>
 </html>
