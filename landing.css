@@ -203,6 +203,12 @@ body[data-page="comprar"] .lp-footer { background: #070707; }
 /* En el pedido el menú queda debajo de la ventana de pago de Clip (si no, tapa su botón de cerrar) */
 body[data-page="pedido"] .mx-nav { z-index: 1; }
 body.px-paying .mx-nav { display: none; }
+/* Botón "Preparando tu pago…": spinner y mensaje mientras carga la pasarela */
+@keyframes px-spin { to { transform: rotate(360deg); } }
+.mx-btn.is-loading { opacity: 1; cursor: progress; }
+.mx-btn.is-loading svg { display: none; }
+.mx-btn.is-loading::before { content: ""; flex: none; width: 18px; height: 18px; margin-right: 0.6rem; border: 2.5px solid rgba(11, 11, 11, 0.25); border-top-color: #0b0b0b; border-radius: 50%; animation: px-spin 0.8s linear infinite; }
+.px-status { margin: 0.75rem 0 0; text-align: center; font-size: 0.9rem; line-height: 1.5; color: var(--gold-light); }
 #lpPartnerCard { order: -1; }
 #lpPartnerCard, #lpOnline { scroll-margin-top: 90px; }
 .mx-choose-btns { display: grid; gap: 0.75rem; grid-template-columns: 1fr; max-width: 520px; margin: 0 auto 1.75rem; }

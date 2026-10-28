@@ -60,6 +60,13 @@
 
   function showError(msg) { errBox.textContent = msg; errBox.hidden = false; errBox.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   function clearError() { errBox.hidden = true; }
+  // Spinner en el botón + mensaje de avance mientras se crea el pedido y carga la pasarela de Clip
+  function setBusy(on, msg) {
+    var s = $('payStatus');
+    payBtn.classList.toggle('is-loading', on);
+    s.hidden = !on;
+    if (on) s.textContent = msg || '';
+  }
 
   form.elements.telefono.addEventListener('input', function (e) { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); });
   form.elements.cp.addEventListener('input', function (e) {
@@ -156,6 +163,7 @@
     payBtn.disabled = true;
     var label = payBtn.firstChild.nodeValue;
     payBtn.firstChild.nodeValue = 'Preparando tu pago… ';
+    setBusy(true, 'Estamos registrando tu pedido…');
 
     fetch(CREATE_URL, {
       method: 'POST',
@@ -172,6 +180,7 @@
     }).catch(function () {
       payBtn.disabled = false;
       payBtn.firstChild.nodeValue = label;
+      setBusy(false);
       showError('No pudimos preparar tu pago. Intenta de nuevo en unos minutos o llámanos al +52 33 3172 1515.');
     });
   });
@@ -214,11 +223,14 @@
     fields.disabled = true;
     $('payPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     watchClipModal();
+    setBusy(true, 'Cargando la pasarela de pago segura… Esto puede tardar unos segundos. No cierres ni recargues la página.');
+    // Termina la espera: la pasarela ya abrió (o se ofrece el respaldo)
+    var doneBusy = function () { setBusy(false); payBtn.firstChild.nodeValue = 'Completa tu pago '; };
 
     var fb = $('clipFallback');
     var link = $('clipFallbackLink');
     if (res.payment_request_url) link.href = res.payment_request_url;
-    var showFallback = function () { if (res.payment_request_url) fb.hidden = false; };
+    var showFallback = function () { doneBusy(); if (res.payment_request_url) fb.hidden = false; };
 
     if (mounted) { showFallback(); return; }
     mounted = true;
@@ -247,6 +259,7 @@
           clearInterval(wait);
           clearTimeout(timer);                       // pago embebido listo: no mostrar el respaldo
           btn.click();
+          doneBusy();
         } else if (tries > 30) {
           clearInterval(wait);
           showFallback();
@@ -261,6 +274,7 @@
   $('editData').addEventListener('click', function () {
     $('payPanel').hidden = true;
     $('clipFallback').hidden = true;
+    setBusy(false);
     fields.disabled = false;
     payBtn.disabled = false;
     payBtn.firstChild.nodeValue = 'Continuar al pago ';
