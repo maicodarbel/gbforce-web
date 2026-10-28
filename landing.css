@@ -200,6 +200,8 @@ body[data-page="comprar"] .lp-footer { background: #070707; }
 /* ── Elige cómo comprarlo: en línea o con un socio ── */
 .mx-choose { display: grid; gap: 1.25rem; grid-template-columns: 1fr; align-items: stretch; margin-bottom: 1.5rem; }
 .mx-choice { position: relative; padding: 1.75rem 1.4rem; border-radius: 28px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)); border: 1px solid var(--mx-glass-border); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); text-align: center; }
+/* En el pedido el menú queda debajo de la ventana de pago de Clip (si no, tapa su botón de cerrar) */
+body[data-page="pedido"] .mx-nav { z-index: 1; }
 #lpPartnerCard { order: -1; }
 #lpPartnerCard, #lpOnline { scroll-margin-top: 90px; }
 .mx-choose-btns { display: grid; gap: 0.75rem; grid-template-columns: 1fr; max-width: 520px; margin: 0 auto 1.75rem; }
