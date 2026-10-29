@@ -34,11 +34,16 @@
 
   // ── Cantidad y total ──
   var qty = 1;
+  function shipping() { return qty >= FREE_SHIPPING_QTY ? 0 : SHIPPING_FEE; }
+  function orderTotal() { return qty * PRICE_MXN + (shipping() || 0); }   // mismo total que se muestra y que cobra el servidor
+  function checkoutData() {
+    return { value: orderTotal(), currency: 'MXN', num_items: qty, content_ids: ['gbforce-caja-7'], content_type: 'product' };
+  }
   function renderTotals() {
     $('qtyValue').textContent = qty;
-    var ship = qty >= FREE_SHIPPING_QTY ? 0 : SHIPPING_FEE;
+    var ship = shipping();
     $('shipValue').textContent = ship === 0 ? 'Gratis' : (ship === null ? 'Por definir' : money(ship));
-    $('totalValue').textContent = money(qty * PRICE_MXN + (ship || 0)) + ' MXN';
+    $('totalValue').textContent = money(orderTotal()) + ' MXN';
     $('qtyMinus').disabled = qty <= 1;
     $('qtyPlus').disabled = qty >= MAX_QTY;
     $('bulkNote').hidden = qty < MAX_QTY;
@@ -50,7 +55,7 @@
   $('qtyPlus').addEventListener('click', function () { if (qty < MAX_QTY) { qty++; renderTotals(); } });
   renderTotals();
 
-  gbTrackEvent('InitiateCheckout', { value: PRICE_MXN, currency: 'MXN', num_items: 1 });
+  gbTrackEvent('InitiateCheckout', checkoutData());
 
   // ── Formulario ──
   var form = $('pedidoForm');
@@ -179,7 +184,7 @@
     }).then(function (res) {
       if (!res || !res.payment_request_id || !res.order_id) throw new Error('respuesta incompleta');
       try { sessionStorage.setItem('gb_order', res.order_id); } catch (e2) {}
-      gbTrackEvent('AddPaymentInfo', { value: qty * PRICE_MXN, currency: 'MXN' }, eventId);
+      gbTrackEvent('AddPaymentInfo', checkoutData(), eventId);
       openPayment(res);
     }).catch(function () {
       payBtn.disabled = false;

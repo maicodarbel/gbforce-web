@@ -107,7 +107,7 @@ Nodos:
    - `amount` coincide con el `Monto` guardado del pedido.
 4. **Airtable — buscar** pedido por `Pedido`; si ya está `PAGADO`, terminar (idempotente: Clip puede reintentar hasta 4 veces).
 5. **Airtable — actualizar**: `Estado = PAGADO`, `ReceiptNo = receipt_no`, `PagadoEn = ahora`.
-6. **HTTP Request — Meta CAPI**: `POST https://graph.facebook.com/v19.0/{META_PIXEL_ID}/events?access_token=…` con un evento `Purchase`: `event_id = <pedido>` (el mismo que usa `gracias.html`, así Meta deduplica), `event_time`, `action_source: "website"`, `event_source_url: https://gbforce.mx/gracias.html`, `user_data` con `em` y `ph` en SHA-256 (minúsculas, teléfono con 52), `fbp`, `fbc`, y `custom_data: { value: monto, currency: "MXN" }`.
+6. **HTTP Request — Meta CAPI**: `POST https://graph.facebook.com/v23.0/{META_PIXEL_ID}/events?access_token=…` con un evento `Purchase`: `event_id = <pedido>` (el mismo que usa `gracias.html`, así Meta deduplica), `event_time`, `action_source: "website"`, `event_source_url: https://gbforce.mx/gracias.html`, `user_data` con `em` y `ph` en SHA-256 (minúsculas, teléfono con 52), `fbp`, `fbc`, y `custom_data: { value: monto, currency: "MXN" }`.
 7. **Avisos**: correo (o WhatsApp) al equipo con los datos de envío y a la persona con la confirmación.
 8. Si `CANCELED` o `EXPIRED`: actualizar `Estado = FALLIDO`.
 9. Responder siempre `200` rápido (Clip no documenta qué espera).

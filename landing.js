@@ -49,13 +49,17 @@
 
   // ── Página consumidor ──
   if (page === 'comprar') {
-    gbTrackEvent('ViewContent', { content_name: 'GB FORCE caja 7 viales', value: PRICE_MXN, currency: 'MXN' });
+    gbTrackEvent('ViewContent', { content_name: 'GB FORCE caja 7 viales', content_ids: ['gbforce-caja-7'], content_type: 'product', value: PRICE_MXN, currency: 'MXN' });
     document.querySelectorAll('[data-price]').forEach(function (el) {
       el.textContent = '$' + PRICE_MXN.toLocaleString('es-MX');
     });
     // El botón de compra lleva a la página de pedido (datos de envío + pago con Clip)
     document.querySelectorAll('[data-buy]').forEach(function (btn) {
       btn.href = withTracking('pedido.html');
+      // Al tocar "Comprar" se registra AddToCart (una caja) antes de pasar al pedido
+      btn.addEventListener('click', function () {
+        gbTrackEvent('AddToCart', { content_name: 'GB FORCE caja 7 viales', content_ids: ['gbforce-caja-7'], content_type: 'product', num_items: 1, value: PRICE_MXN, currency: 'MXN' });
+      });
     });
   }
 
@@ -298,7 +302,7 @@
               try { already = sessionStorage.getItem(key) === '1'; } catch (e) {}
               if (!already) {
                 // El mismo event_id (id del pedido) permite deduplicar con la API de conversiones
-                gbTrackEvent('Purchase', { value: Number(res.amount) || PRICE_MXN, currency: 'MXN', content_name: 'GB FORCE' }, orderId);
+                gbTrackEvent('Purchase', { value: Number(res.amount) || PRICE_MXN, currency: 'MXN', content_name: 'GB FORCE', content_ids: ['gbforce-caja-7'], content_type: 'product' }, orderId);
                 try { sessionStorage.setItem(key, '1'); } catch (e) {}
               }
             } else if (res && res.status === 'FALLIDO') {
