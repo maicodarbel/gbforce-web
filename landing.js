@@ -147,6 +147,90 @@
     }
   }
 
+  // ── Testimonios: carrusel que se mueve de izquierda a derecha de forma continua y muy lenta ──
+  // Se detiene al pasar el mouse, al enfocar o tocar, fuera de pantalla, con el botón de pausa
+  // y si la persona pidió reducir el movimiento. Las tarjetas se duplican para un bucle sin saltos.
+  var tcar = document.getElementById('lpTestimonials');
+  if (tcar) {
+    var tTrack = tcar.querySelector('.mx-ttrack');
+    var cards = Array.prototype.slice.call(tTrack.querySelectorAll('.mx-tcard'));
+    var dotsBox = tcar.querySelector('.mx-tdots');
+    var pauseBtn = tcar.querySelector('[data-t="pause"]');
+    var SPEED = 30;   // píxeles por segundo: lento, para poder leer
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var userPaused = reduce;   // pausa elegida con el botón (o por reducir movimiento)
+    var hold = false;          // pausa temporal: mouse encima, foco o toque
+    var visible = true;        // la sección está en pantalla
+    var pos = 0;               // posición exacta (el navegador redondea scrollLeft)
+    var last = 0;
+    var raf = 0;
+    var releaseTimer = null;
+
+    cards.forEach(function (c) {
+      var d = document.createElement('span'); d.className = 'mx-tdot'; dotsBox.appendChild(d);
+      var clone = c.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      tTrack.appendChild(clone);
+    });
+    var dots = dotsBox.querySelectorAll('.mx-tdot');
+
+    function step() { return cards[1].offsetLeft - cards[0].offsetLeft; }
+    function loopW() { return step() * cards.length; }   // ancho de un juego completo de tarjetas
+    function wrap() { var w = loopW(); if (tTrack.scrollLeft >= w) { tTrack.scrollLeft -= w; pos = tTrack.scrollLeft; } }
+    function paintDots() {
+      var i = Math.round((tTrack.scrollLeft % loopW()) / step()) % cards.length;
+      dots.forEach(function (d, n) { d.classList.toggle('on', n === i); });
+    }
+    function running() { return !userPaused && !hold && visible; }
+    function tick(now) {
+      raf = 0;
+      if (!running()) return;
+      var dt = Math.min(now - last, 50) / 1000;
+      last = now;
+      if (Math.abs(tTrack.scrollLeft - pos) > 2) pos = tTrack.scrollLeft;   // la persona movió el carrusel
+      pos += SPEED * dt;
+      if (pos >= loopW()) pos -= loopW();
+      tTrack.scrollLeft = pos;
+      raf = requestAnimationFrame(tick);
+    }
+    function sync() {
+      if (running() && !raf) { last = performance.now(); pos = tTrack.scrollLeft; raf = requestAnimationFrame(tick); }
+    }
+    function goNext() { wrap(); tTrack.scrollTo({ left: tTrack.scrollLeft + step(), behavior: 'smooth' }); }
+    function goPrev() {
+      if (tTrack.scrollLeft < step()) tTrack.scrollLeft += loopW();   // salta a la copia para poder retroceder
+      tTrack.scrollTo({ left: tTrack.scrollLeft - step(), behavior: 'smooth' });
+    }
+
+    tTrack.addEventListener('scroll', paintDots, { passive: true });
+    window.addEventListener('resize', paintDots);
+    tcar.querySelector('[data-t="next"]').addEventListener('click', goNext);
+    tcar.querySelector('[data-t="prev"]').addEventListener('click', goPrev);
+    pauseBtn.addEventListener('click', function () {
+      userPaused = !userPaused;
+      pauseBtn.setAttribute('aria-pressed', String(userPaused));
+      pauseBtn.setAttribute('aria-label', userPaused ? 'Reanudar el movimiento' : 'Pausar el movimiento');
+      sync();
+    });
+    ['mouseenter', 'focusin', 'touchstart', 'pointerdown'].forEach(function (ev) {
+      tcar.addEventListener(ev, function () { clearTimeout(releaseTimer); hold = true; }, { passive: true });
+    });
+    ['mouseleave', 'focusout'].forEach(function (ev) {
+      tcar.addEventListener(ev, function () { hold = false; sync(); });
+    });
+    // En pantallas táctiles no hay "mouseleave": se reanuda unos segundos después de soltar
+    tcar.addEventListener('touchend', function () {
+      clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(function () { hold = false; sync(); }, 4000);
+    }, { passive: true });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; sync(); }, { threshold: 0.3 }).observe(tcar);
+    }
+    if (reduce) { pauseBtn.setAttribute('aria-pressed', 'true'); pauseBtn.setAttribute('aria-label', 'Reanudar el movimiento'); }
+    paintDots();
+    sync();
+  }
+
   // ── Botón fijo inferior (móvil): se oculta cuando el destino ya está a la vista ──
   var sticky = document.getElementById('lpSticky');
   var stickyTarget = document.getElementById(page === 'asociados' ? 'solicitar' : 'comprar');

@@ -203,6 +203,35 @@ body[data-page="comprar"] .lp-footer { background: #070707; }
 /* En el pedido el menú queda debajo de la ventana de pago de Clip (si no, tapa su botón de cerrar) */
 body[data-page="pedido"] .mx-nav { z-index: 1; }
 body.px-paying .mx-nav { display: none; }
+
+/* Menú de la landing de compra: Producto · Asociados · Comprar */
+.mx-nav-links { display: flex; align-items: center; gap: 0.85rem; }
+.mx-nav-links a:not(.mx-btn) { color: var(--white); font-size: 0.82rem; font-weight: 500; text-decoration: none; opacity: 0.85; }
+.mx-nav-links a:not(.mx-btn):hover { color: var(--gold-light); opacity: 1; }
+@media (min-width: 640px) { .mx-nav-links { gap: 1.5rem; } .mx-nav-links a:not(.mx-btn) { font-size: 0.92rem; } }
+
+/* ── Testimonios: carrusel horizontal de movimiento continuo y lento (JS en landing.js) ── */
+.mx-tcar { margin-top: 1.75rem; }
+.mx-ttrack { display: flex; gap: 1rem; overflow-x: auto; scroll-behavior: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0.25rem 0 0.75rem; }
+.mx-ttrack::-webkit-scrollbar { display: none; }
+.mx-ttrack:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 4px; border-radius: 20px; }
+.mx-tcard { flex: 0 0 86%; margin: 0; padding: 1.5rem 1.35rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; border-radius: 24px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)); border: 1px solid var(--mx-glass-border); }
+.mx-tcard blockquote { margin: 0; }
+.mx-tcard blockquote p { margin: 0; font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 1.2rem; line-height: 1.5; font-style: italic; color: var(--white); }
+.mx-tcard figcaption { color: var(--gold-light); font-size: 0.9rem; letter-spacing: 0.04em; }
+.mx-tcard figcaption b { font-weight: 700; }
+.mx-tctrl { display: flex; align-items: center; justify-content: center; gap: 0.9rem; margin-top: 0.5rem; }
+.mx-tbtn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(201, 168, 76, 0.5); background: transparent; color: var(--gold-light); cursor: pointer; transition: background 0.2s; }
+.mx-tbtn:hover { background: rgba(201, 168, 76, 0.14); }
+.mx-tbtn:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
+.mx-tbtn svg { width: 20px; height: 20px; }
+.mx-tbtn .i-play, .mx-tbtn[aria-pressed="true"] .i-pause { display: none; }
+.mx-tbtn[aria-pressed="true"] .i-play { display: block; }
+.mx-tdots { display: flex; gap: 0.45rem; }
+.mx-tdot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.2s, transform 0.2s; }
+.mx-tdot.on { background: var(--gold-light); transform: scale(1.3); }
+@media (min-width: 640px) { .mx-tcard { flex-basis: calc((100% - 1rem) / 2); } }
+@media (min-width: 960px) { .mx-tcard { flex-basis: calc((100% - 2rem) / 3); } }
 /* Botón "Preparando tu pago…": spinner y mensaje mientras carga la pasarela */
 @keyframes px-spin { to { transform: rotate(360deg); } }
 .mx-btn.is-loading { opacity: 1; cursor: progress; }

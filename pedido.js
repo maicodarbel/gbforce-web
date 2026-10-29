@@ -68,7 +68,11 @@
     if (on) s.textContent = msg || '';
   }
 
-  form.elements.telefono.addEventListener('input', function (e) { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); });
+  // Teléfono con guiones mientras se escribe: 33-1234-5678 (al enviar solo viajan los 10 dígitos)
+  form.elements.telefono.addEventListener('input', function (e) {
+    var d = e.target.value.replace(/\D/g, '').slice(0, 10);
+    e.target.value = d.replace(/^(\d{2})(\d{1,4})(\d{1,4})?$/, function (m, a, b, c) { return a + '-' + b + (c ? '-' + c : ''); });
+  });
   form.elements.cp.addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
     if (e.target.value.length === 5) lookupCp(e.target.value);
@@ -131,7 +135,7 @@
     var f = form.elements;
     var data = {
       nombre: f.nombre.value.trim(),
-      telefono: f.telefono.value.trim(),
+      telefono: f.telefono.value.replace(/\D/g, ''),
       correo: f.correo.value.trim(),
       calle: f.calle.value.trim(),
       colonia: f.colonia.value.trim(),

@@ -2687,6 +2687,11 @@ img { max-width: 100%; display: block; }
 .lp-header { position: sticky; top: 0; z-index: 50; background: rgba(9,9,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--black-border); }
 .lp-header-inner { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .lp-header-cta { padding: 0.5rem 1rem; font-size: 0.8rem; }
+.lp-header-links { display: flex; gap: 1rem; margin-left: auto; }
+.lp-header-links a { color: var(--white); font-size: 0.85rem; text-decoration: none; opacity: 0.85; }
+.lp-header-links a:hover { color: var(--gold); opacity: 1; }
+/* En celular el botón "Solicitar una llamada" ya va fijo abajo (lp-sticky): el encabezado queda con el menú */
+@media (max-width: 560px) { .lp-header-cta { display: none; } .lp-header-links { gap: 1.25rem; } }
 .lp-wrap { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
 .lp-narrow { max-width: 720px; }
 .lp-hero { padding: 2rem 0 2.5rem; background: var(--black); }

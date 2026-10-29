@@ -33,13 +33,17 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=14">
-<link rel="stylesheet" href="landing.css?v=20">
+<link rel="stylesheet" href="landing.css?v=26">
 </head>
 <body data-page="comprar">
 
 <header class="mx-nav">
   <a href="comprar.html" class="logo"><span class="logo-gb">GB</span><span class="logo-force">FORCE</span></a>
-  <a href="#comprar" class="mx-btn mx-btn-sm">Comprar</a>
+  <nav class="mx-nav-links" aria-label="Principal">
+    <a href="index.html" data-keep-utm>Producto</a>
+    <a href="asociados.html" data-keep-utm>Asociados</a>
+    <a href="#comprar" class="mx-btn mx-btn-sm">Comprar</a>
+  </nav>
 </header>
 
 <main>
@@ -175,7 +179,7 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
     </div>
   </section>
 
-  <!-- 4. RESPALDO Y CALIDAD (testimonios reales se agregan aquí cuando existan) -->
+  <!-- 4. RESPALDO Y CALIDAD -->
   <section class="mx-section">
     <div class="mx-wrap">
       <span class="mx-eyebrow mx-reveal">Confianza</span>
@@ -186,6 +190,60 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
         <div class="mx-cert mx-reveal mx-d2"><img src="assets/certs/cofepris.png" alt="Logo COFEPRIS" loading="lazy"><div><b>Aviso COFEPRIS</b><small>2514105019x00417</small></div></div>
       </div>
       <p class="mx-note">Las certificaciones corresponden a la planta y al laboratorio de manufactura. <a href="index.html#respaldo" data-keep-utm class="lp-link">Ver detalle</a></p>
+    </div>
+  </section>
+
+  <!-- 4b. TESTIMONIOS (carrusel horizontal con scroll-snap; ver landing.js "Testimonios")
+       TODO: los textos de abajo son PROVISIONALES para ver el diseño. NO publicar hasta reemplazarlos
+       por testimonios reales con autorización por escrito de cada persona.
+       TODO: Dra. Maricela — faltan nombre completo, cédula y contacto (no mostrar hasta tener su autorización). -->
+  <section class="mx-section mx-testimonials" id="testimonios" aria-labelledby="testimoniosTitulo">
+    <div class="mx-wrap">
+      <span class="mx-eyebrow mx-reveal">Testimonios</span>
+      <h2 class="mx-h2 mx-reveal" id="testimoniosTitulo">Lo que dicen <em>quienes lo usan</em></h2>
+      <div class="mx-tcar mx-reveal" id="lpTestimonials" role="region" aria-roledescription="carrusel" aria-label="Testimonios">
+        <div class="mx-ttrack" tabindex="0">
+          <figure class="mx-tcard">
+            <blockquote><p>“Me parece una opción práctica para quienes buscan apoyar su energía y su enfoque en el día a día: un vial por la mañana, fácil de integrar a la rutina.”</p></blockquote>
+            <figcaption><b>Dra. Maricela</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“La verdad yo llegaba a mi casa y ya no quería saber nada de nada, ni jugar con los niños. Últimamente me he sentido con más pila y hasta mi esposo me dice que ya no ando tan apagada.”</p></blockquote>
+            <figcaption><b>Mariana</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Yo al principio no esperaba gran cosa, pero la neta sí he sentido diferencia. Antes a las cuatro de la tarde ya andaba arrastrando los pies y ahora aguanto mucho mejor el día.”</p></blockquote>
+            <figcaption><b>Ricardo</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Había días que llegaba al gimnasio y nomás no traía ganas de entrenar. No sé cómo explicarlo, pero últimamente me siento con más ánimo y ya no me cuesta tanto arrancar.”</p></blockquote>
+            <figcaption><b>Alejandra</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Lo mío era después de comer, me daba un sueño terrible, hasta me costaba seguir trabajando. Desde que empecé con GB FORCE siento que ya no me pega tanto ese bajón.”</p></blockquote>
+            <figcaption><b>Jorge</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Antes traía la cabeza en mil cosas y se me iba el rollo a cada rato. Ahora me siento más despejada, como que puedo hacer mis cosas sin distraerme tanto.”</p></blockquote>
+            <figcaption><b>Patricia</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Mi esposa siempre me decía que llegaba de malas y sin ganas de salir. Y sí era cierto, llegaba fundido. Últimamente hasta me dan ganas de salir a caminar después del trabajo.”</p></blockquote>
+            <figcaption><b>Daniel</b></figcaption>
+          </figure>
+          <figure class="mx-tcard">
+            <blockquote><p>“Yo era de las que se levantaban más cansadas que cuando se acostaban, jajaja. No digo que todos los días sean perfectos, pero sí he notado que algunas mañanas ya no me cuestan tanto.”</p></blockquote>
+            <figcaption><b>Claudia</b></figcaption>
+          </figure>
+        </div>
+        <div class="mx-tctrl">
+          <button type="button" class="mx-tbtn" data-t="prev" aria-label="Testimonio anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="mx-tdots" aria-hidden="true"></div>
+          <button type="button" class="mx-tbtn" data-t="pause" aria-label="Pausar el movimiento" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <button type="button" class="mx-tbtn" data-t="next" aria-label="Siguiente testimonio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <p class="mx-note">Opiniones personales. Suplemento alimenticio; no es un medicamento. Los resultados pueden variar.</p>
     </div>
   </section>
 
@@ -351,15 +409,27 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
   <section class="mx-section" style="padding-top:0">
     <div class="mx-wrap" style="max-width:760px">
       <details class="lp-faq-all">
-        <summary>Preguntas rápidas</summary>
+        <summary>Preguntas frecuentes</summary>
         <div class="faq-list">
           <div class="faq-item">
             <button class="faq-q">¿Es un medicamento? <span>+</span></button>
             <div class="faq-a"><p>No. GB FORCE es un suplemento alimenticio. No es un medicamento, no trata enfermedades ni sustituye tratamientos médicos.</p></div>
           </div>
           <div class="faq-item">
-            <button class="faq-q">¿Cuántos viales trae y cómo se consume? <span>+</span></button>
-            <div class="faq-a"><p>Cada caja contiene 7 viales de 10 ml. Se consume un vial por día, vía oral, preferentemente por la mañana.</p></div>
+            <button class="faq-q">¿Cómo se consume GB FORCE? <span>+</span></button>
+            <div class="faq-a"><p>Un vial de 10 ml por día, preferentemente por la mañana. Vía oral. Cada presentación contiene 7 viales, equivalente a una semana de consumo.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">¿Cuántos viales trae una presentación? <span>+</span></button>
+            <div class="faq-a"><p>Cada caja contiene 7 viales de 10 ml. Una caja = una semana de consumo diario.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">¿Cuándo empiezo a sentir los efectos? <span>+</span></button>
+            <div class="faq-a"><p>Su acción es progresiva y varía según cada persona, su estilo de vida y su alimentación. Es un suplemento alimenticio y no sustituye un tratamiento médico.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">¿Cuánto tiempo lo tengo que tomar? <span>+</span></button>
+            <div class="faq-a"><p>Inicialmente, una semana (una caja). Después puedes variar la toma por semana, según cómo te sientas.</p></div>
           </div>
           <div class="faq-item">
             <button class="faq-q">¿Cuánto tarda en llegar mi pedido? <span>+</span></button>
@@ -384,6 +454,6 @@ src="https://www.facebook.com/tr?id=1676702536743834&ev=PageView&noscript=1"
 
 
 <script src="analytics.js?v=1"></script>
-<script src="landing.js?v=7"></script>
+<script src="landing.js?v=9"></script>
 </body>
 </html>
